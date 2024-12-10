@@ -14,16 +14,19 @@ UserStateType == [ epoch: Nat, idx_in_messages: Nat, users_pending_add: SUBSET N
 variables 
   messages = <<>>;
   user_states = <<>>; \* This is in order of UID
-  total_user_count = 1;
+  next_free_uid = 1;
 
 define
-    \* Undefined if S is empty
     Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
         \A y \in S :
-            x >= y 
+            x >= y
+    
+    Min(S) == IF S = {} THEN 99999999 ELSE CHOOSE x \in S :
+        \A y \in S :
+            x <= y
 
     TypeInvariant ==
-        /\ total_user_count \in Nat
+        /\ next_free_uid \in Nat
         /\ \A j \in 1..Len(messages): \* messages consists of JoinLeave or MLS messages
             \/ messages[j] \in JoinLeaveType
             \/ messages[j] \in MlsAddRemoveType
@@ -57,38 +60,55 @@ define
     
     \* Set of alive users who are not fully caught up with messages
     UsersWithUnreads == { i \in AliveUids : user_states[i]["idx_in_messages"] < Len(messages) }
+    
+    \* Does "I am DC" have to be a local property, ie a function of idx_into_messages? Suppose two parties i < j think they're DC.
+    \* Both are alive by definition. So j somehow thinks userLeft[uid=i] occurred. Contradiction. So no two parties think they are DC
+    \* That said, it is possible for non-DC parties to have conflicting views on who the current DC is. But that doesn't matter.
+
+    DesignatedCommitter == Min(AliveUids)
+    
+    \* The DC doesn't always know that they're the DC. They know iff they've processed all the userLefts for the UIDs before them
+    DcIsReady == IF AliveUids = {} THEN FALSE ELSE
+        LET
+        \* Enumerate the messages that pertain to UIDs lower than the DC leaving
+        lower_uid_left == { i \in Len(messages) :
+            /\ messages[i]["ty"] = "userLeft"
+            /\ messages[i]["uid"] < DesignatedCommitter
+        }
+    IN
+        \* Check that the DC has processed all of the requisite messages
+        user_states[DesignatedCommitter]["idx_in_messages"] >= Max(lower_uid_left)  
 
     Invariant ==
         /\ TypeInvariant
         \*/\ MaxInvariant \/ AllAreJoins
 end define;
 
-macro add_user()
+\* Adds a "user_joined" event to messages. The UID is the next free UID
+macro append_user_joined_event()
 begin
-    messages := Append(messages, [ty |-> "user_joined", uid |-> total_user_count]);
-    total_user_count := total_user_count + 1;
+    messages := Append(messages, [ty |-> "user_joined", uid |-> next_free_uid]);
+    next_free_uid := next_free_uid + 1;
 end macro;
 
-macro remove_user(j)
+\* Adds a "user_left" event to messages with the given UID
+macro append_user_left_event(uid)
 begin
-    messages := Append(messages, [ty |-> "user_left", uid |-> j]);
+    messages := Append(messages, [ty |-> "user_left", uid |-> uid]);
 end macro;
 
 process DeliveryService = 0
 begin
     Main:
-        while total_user_count < MaxTotalUsers do
-            if GroupIsEmpty then
-                add_user();
-            else
-                either
-                    add_user();
-                or
-                    with j \in AliveUids do
-                        remove_user(j)
-                    end with;
-                end either;
-            end if;
+        while next_free_uid < MaxTotalUsers do
+            either
+                append_user_joined_event();
+            or
+                await GroupIsNonempty; \* Can only Remove if the group is nonempty
+                with j \in AliveUids do
+                    append_user_left_event(j);
+                end with;
+            end either;
         end while;
 end process;
 
@@ -126,16 +146,20 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "12e60af6" /\ chksum(tla) = "b70b3d23")
-VARIABLES messages, user_states, total_user_count, pc
+\* BEGIN TRANSLATION (chksum(pcal) = "b205f398" /\ chksum(tla) = "8d47e001")
+VARIABLES messages, user_states, next_free_uid, pc
 
 (* define statement *)
 Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
     \A y \in S :
         x >= y
 
+Min(S) == IF S = {} THEN 99999999 ELSE CHOOSE x \in S :
+    \A y \in S :
+        x <= y
+
 TypeInvariant ==
-    /\ total_user_count \in Nat
+    /\ next_free_uid \in Nat
     /\ \A j \in 1..Len(messages):
         \/ messages[j] \in JoinLeaveType
         \/ messages[j] \in MlsAddRemoveType
@@ -170,19 +194,37 @@ LargestUserEpoch == Max({user_states[i]["epoch"] : i \in 1..Len(user_states)})
 
 UsersWithUnreads == { i \in AliveUids : user_states[i]["idx_in_messages"] < Len(messages) }
 
+
+
+
+
+DesignatedCommitter == Min(AliveUids)
+
+
+DcIsReady == IF AliveUids = {} THEN FALSE ELSE
+    LET
+
+    lower_uid_left == { i \in Len(messages) :
+        /\ messages[i]["ty"] = "userLeft"
+        /\ messages[i]["uid"] < DesignatedCommitter
+    }
+IN
+
+    user_states[DesignatedCommitter]["idx_in_messages"] >= Max(lower_uid_left)
+
 Invariant ==
     /\ TypeInvariant
 
 VARIABLE messages_idx
 
-vars == << messages, user_states, total_user_count, pc, messages_idx >>
+vars == << messages, user_states, next_free_uid, pc, messages_idx >>
 
 ProcSet == {0} \cup {1} \cup {2}
 
 Init == (* Global variables *)
         /\ messages = <<>>
         /\ user_states = <<>>
-        /\ total_user_count = 1
+        /\ next_free_uid = 1
         (* Process JoiningUsers *)
         /\ messages_idx = 0
         /\ pc = [self \in ProcSet |-> CASE self = 0 -> "Main"
@@ -190,18 +232,16 @@ Init == (* Global variables *)
                                         [] self = 2 -> "JoningMain"]
 
 Main == /\ pc[0] = "Main"
-        /\ IF total_user_count < MaxTotalUsers
-              THEN /\ IF GroupIsEmpty
-                         THEN /\ messages' = Append(messages, [ty |-> "user_joined", uid |-> total_user_count])
-                              /\ total_user_count' = total_user_count + 1
-                         ELSE /\ \/ /\ messages' = Append(messages, [ty |-> "user_joined", uid |-> total_user_count])
-                                    /\ total_user_count' = total_user_count + 1
-                                 \/ /\ \E j \in AliveUids:
-                                         messages' = Append(messages, [ty |-> "user_left", uid |-> j])
-                                    /\ UNCHANGED total_user_count
+        /\ IF next_free_uid < MaxTotalUsers
+              THEN /\ \/ /\ messages' = Append(messages, [ty |-> "user_joined", uid |-> next_free_uid])
+                         /\ next_free_uid' = next_free_uid + 1
+                      \/ /\ GroupIsNonempty
+                         /\ \E j \in AliveUids:
+                              messages' = Append(messages, [ty |-> "user_left", uid |-> j])
+                         /\ UNCHANGED next_free_uid
                    /\ pc' = [pc EXCEPT ![0] = "Main"]
               ELSE /\ pc' = [pc EXCEPT ![0] = "Done"]
-                   /\ UNCHANGED << messages, total_user_count >>
+                   /\ UNCHANGED << messages, next_free_uid >>
         /\ UNCHANGED << user_states, messages_idx >>
 
 DeliveryService == Main
@@ -213,8 +253,7 @@ UserMain == /\ pc[1] = "UserMain"
                        /\ TRUE
                        /\ pc' = [pc EXCEPT ![1] = "UserMain"]
                   ELSE /\ pc' = [pc EXCEPT ![1] = "Done"]
-            /\ UNCHANGED << messages, user_states, total_user_count, 
-                            messages_idx >>
+            /\ UNCHANGED << messages, user_states, next_free_uid, messages_idx >>
 
 Users == UserMain
 
@@ -229,13 +268,13 @@ JoningMain == /\ pc[2] = "JoningMain"
                                                               users_pending_remove |-> {}
                                                       ])
                                     /\ Assert(Len(user_states') = messages[messages_idx']["epoch"], 
-                                              "Failure of assertion at line 123, column 21.")
+                                              "Failure of assertion at line 143, column 21.")
                                ELSE /\ TRUE
                                     /\ UNCHANGED user_states
                     ELSE /\ TRUE
                          /\ UNCHANGED << user_states, messages_idx >>
               /\ pc' = [pc EXCEPT ![2] = "JoningMain"]
-              /\ UNCHANGED << messages, total_user_count >>
+              /\ UNCHANGED << messages, next_free_uid >>
 
 JoiningUsers == JoningMain
 
@@ -247,5 +286,5 @@ Spec == Init /\ [][Next]_vars
 
 =============================================================================
 \* Modification History
-\* Last modified Tue Dec 10 01:18:51 CET 2024 by mrosenberg
+\* Last modified Tue Dec 10 17:01:27 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

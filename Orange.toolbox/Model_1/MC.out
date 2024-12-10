@@ -2,7 +2,7 @@
 TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 3 and seed 4300429987669679152 with 4 workers on 8 cores with 1822MB heap and 4095MB offheap memory [pid: 71331] (Mac OS X 10.16 x86_64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 80 and seed -890986571207601611 with 4 workers on 8 cores with 1822MB heap and 4095MB offheap memory [pid: 81394] (Mac OS X 10.16 x86_64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
@@ -25,398 +25,398 @@ Semantic processing of module MC
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2024-12-10 01:18:55)
+Starting... (2024-12-10 17:01:30)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2189:0 @!@!@
 Computing initial states...
 @!@!@ENDMSG 2189 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 1 distinct state generated at 2024-12-10 01:18:56.
+Finished computing initial states: 1 distinct state generated at 2024-12-10 17:01:31.
 @!@!@ENDMSG 2190 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(19) at 2024-12-10 01:18:59: 207,669 states generated (207,669 s/min), 63,509 distinct states found (63,509 ds/min), 6,532 states left on queue.
+Progress(20) at 2024-12-10 17:01:34: 215,550 states generated (215,550 s/min), 65,437 distinct states found (65,437 ds/min), 5,963 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2193:0 @!@!@
 Model checking completed. No error has been found.
   Estimates of the probability that TLC did not check all reachable states
   because two distinct states had the same fingerprint:
   calculated (optimistic):  val = 8.6E-10
-  based on the actual fingerprints:  val = 1.1E-9
+  based on the actual fingerprints:  val = 1.9E-10
 @!@!@ENDMSG 2193 @!@!@
 @!@!@STARTMSG 2201:0 @!@!@
-The coverage statistics at 2024-12-10 01:19:01
+The coverage statistics at 2024-12-10 17:01:35
 @!@!@ENDMSG 2201 @!@!@
 @!@!@STARTMSG 2773:0 @!@!@
-<Init line 182, col 1 to line 182, col 4 of module orange_draft1>: 1:1
+<Init line 224, col 1 to line 224, col 4 of module orange_draft1>: 1:1
 @!@!@ENDMSG 2773 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 183, col 9 to line 190, col 68 of module orange_draft1: 1
+  line 225, col 9 to line 232, col 68 of module orange_draft1: 1
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<Main line 192, col 1 to line 192, col 4 of module orange_draft1>: 18934:75845
+<Main line 234, col 1 to line 234, col 4 of module orange_draft1>: 17092:75845
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 192, col 12 to line 192, col 25 of module orange_draft1: 135033
+  line 234, col 12 to line 234, col 25 of module orange_draft1: 135033
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 192, col 12 to line 192, col 16 of module orange_draft1: 81020
+  |line 234, col 12 to line 234, col 16 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 193, col 15 to line 193, col 46 of module orange_draft1: 54013
+  line 235, col 15 to line 235, col 43 of module orange_draft1: 54013
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 194, col 26 to line 194, col 37 of module orange_draft1: 27006
+  line 236, col 26 to line 237, col 62 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 164, col 17 to line 164, col 34 of module orange_draft1: 27006
+  line 190, col 20 to line 190, col 32 of module orange_draft1: 42548
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||line 164, col 17 to line 164, col 23 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2775:0 @!@!@
-  |||line 149, col 25 to line 149, col 86 of module orange_draft1: 27006:159298
-@!@!@ENDMSG 2775 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 52 to line 149, col 84 of module orange_draft1: 242752
+  |line 190, col 21 to line 190, col 32 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 33 to line 149, col 48 of module orange_draft1: 27006
+  ||line 188, col 17 to line 188, col 34 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |||line 151, col 5 to line 151, col 51 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 7 to line 151, col 24 of module orange_draft1: 132292
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 34 to line 151, col 49 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||line 164, col 27 to line 164, col 34 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||line 153, col 13 to line 160, col 1 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 154, col 5 to line 159, col 35 of module orange_draft1: 132292
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 155, col 9 to line 159, col 35 of module orange_draft1: 7816012
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 155, col 12 to line 155, col 16 of module orange_draft1: 7816012
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 156, col 12 to line 156, col 44 of module orange_draft1: 6996848
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 157, col 12 to line 157, col 42 of module orange_draft1: 3795796
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 158, col 12 to line 158, col 35 of module orange_draft1: 1561298
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 159, col 12 to line 159, col 35 of module orange_draft1: 362367
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 154, col 16 to line 154, col 31 of module orange_draft1: 132292
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 153, col 23 to line 153, col 29 of module orange_draft1: 27006
+  |||line 188, col 17 to line 188, col 23 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 149, col 25 to line 149, col 86 of module orange_draft1: 27006:159298
+  ||||line 173, col 25 to line 173, col 86 of module orange_draft1: 27006:159298
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 52 to line 149, col 84 of module orange_draft1: 242752
+  |||||line 173, col 52 to line 173, col 84 of module orange_draft1: 242752
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 33 to line 149, col 48 of module orange_draft1: 27006
+  |||||line 173, col 33 to line 173, col 48 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 175, col 5 to line 175, col 51 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 175, col 7 to line 175, col 24 of module orange_draft1: 132292
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 175, col 34 to line 175, col 49 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 188, col 27 to line 188, col 34 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 177, col 13 to line 184, col 1 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 178, col 5 to line 183, col 35 of module orange_draft1: 132292
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 179, col 9 to line 183, col 35 of module orange_draft1: 7816012
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 179, col 12 to line 179, col 16 of module orange_draft1: 7816012
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 180, col 12 to line 180, col 44 of module orange_draft1: 6996848
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 181, col 12 to line 181, col 42 of module orange_draft1: 3795796
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 182, col 12 to line 182, col 35 of module orange_draft1: 1561298
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 183, col 12 to line 183, col 35 of module orange_draft1: 362367
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 178, col 16 to line 178, col 31 of module orange_draft1: 132292
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 177, col 23 to line 177, col 29 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 151, col 5 to line 151, col 51 of module orange_draft1: 27006:159298
+  ||||||line 173, col 25 to line 173, col 86 of module orange_draft1: 27006:159298
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 7 to line 151, col 24 of module orange_draft1: 132292
+  |||||||line 173, col 52 to line 173, col 84 of module orange_draft1: 242752
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 34 to line 151, col 49 of module orange_draft1: 27006
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 195, col 31 to line 196, col 73 of module orange_draft1: 11464
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 197, col 37 to line 198, col 79 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 200, col 42 to line 200, col 102 of module orange_draft1: 21832
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 199, col 49 to line 199, col 57 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |line 162, col 14 to line 162, col 31 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||line 162, col 14 to line 162, col 20 of module orange_draft1: 15542
+  |||||||line 173, col 33 to line 173, col 48 of module orange_draft1: 27006
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||line 149, col 25 to line 149, col 86 of module orange_draft1: 15542:91731
+  ||||||line 175, col 5 to line 175, col 51 of module orange_draft1: 27006:159298
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 52 to line 149, col 84 of module orange_draft1: 130546
+  |||||||line 175, col 7 to line 175, col 24 of module orange_draft1: 132292
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 33 to line 149, col 48 of module orange_draft1: 15542
+  |||||||line 175, col 34 to line 175, col 49 of module orange_draft1: 27006
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 240, col 31 to line 240, col 91 of module orange_draft1: 21832
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 239, col 38 to line 239, col 46 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 186, col 14 to line 186, col 31 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 186, col 14 to line 186, col 20 of module orange_draft1: 15542
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||line 151, col 5 to line 151, col 51 of module orange_draft1: 15542:37374
+  |||line 173, col 25 to line 173, col 86 of module orange_draft1: 15542:91731
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 7 to line 151, col 24 of module orange_draft1: 76189
+  ||||line 173, col 52 to line 173, col 84 of module orange_draft1: 130546
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 34 to line 151, col 49 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||line 162, col 24 to line 162, col 31 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||line 153, col 13 to line 160, col 1 of module orange_draft1: 15542
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 154, col 5 to line 159, col 35 of module orange_draft1: 76189
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 155, col 9 to line 159, col 35 of module orange_draft1: 4163143
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 155, col 12 to line 155, col 16 of module orange_draft1: 4163143
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 156, col 12 to line 156, col 44 of module orange_draft1: 3693282
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 157, col 12 to line 157, col 42 of module orange_draft1: 2144013
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 158, col 12 to line 158, col 35 of module orange_draft1: 851840
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 159, col 12 to line 159, col 35 of module orange_draft1: 196314
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 154, col 16 to line 154, col 31 of module orange_draft1: 76189
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 153, col 23 to line 153, col 29 of module orange_draft1: 15542
+  ||||line 173, col 33 to line 173, col 48 of module orange_draft1: 15542
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 149, col 25 to line 149, col 86 of module orange_draft1: 15542:91731
+  |||line 175, col 5 to line 175, col 51 of module orange_draft1: 15542:37374
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 52 to line 149, col 84 of module orange_draft1: 130546
+  ||||line 175, col 7 to line 175, col 24 of module orange_draft1: 76189
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 33 to line 149, col 48 of module orange_draft1: 15542
+  ||||line 175, col 34 to line 175, col 49 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 186, col 24 to line 186, col 31 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 177, col 13 to line 184, col 1 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 178, col 5 to line 183, col 35 of module orange_draft1: 76189
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 179, col 9 to line 183, col 35 of module orange_draft1: 4163143
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 179, col 12 to line 179, col 16 of module orange_draft1: 4163143
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 180, col 12 to line 180, col 44 of module orange_draft1: 3693282
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 181, col 12 to line 181, col 42 of module orange_draft1: 2144013
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 182, col 12 to line 182, col 35 of module orange_draft1: 851840
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 183, col 12 to line 183, col 35 of module orange_draft1: 196314
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 178, col 16 to line 178, col 31 of module orange_draft1: 76189
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 177, col 23 to line 177, col 29 of module orange_draft1: 15542
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 151, col 5 to line 151, col 51 of module orange_draft1: 15542:91731
+  |||||line 173, col 25 to line 173, col 86 of module orange_draft1: 15542:91731
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 7 to line 151, col 24 of module orange_draft1: 76189
+  ||||||line 173, col 52 to line 173, col 84 of module orange_draft1: 130546
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 34 to line 151, col 49 of module orange_draft1: 15542
+  ||||||line 173, col 33 to line 173, col 48 of module orange_draft1: 15542
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |||||line 175, col 5 to line 175, col 51 of module orange_draft1: 15542:91731
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 175, col 7 to line 175, col 24 of module orange_draft1: 76189
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 201, col 40 to line 201, col 65 of module orange_draft1: 21832
+  ||||||line 175, col 34 to line 175, col 49 of module orange_draft1: 15542
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 202, col 23 to line 202, col 53 of module orange_draft1: 48838
+  line 241, col 29 to line 241, col 51 of module orange_draft1: 21832
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 203, col 23 to line 203, col 53 of module orange_draft1: 27007
+  line 242, col 23 to line 242, col 53 of module orange_draft1: 48838
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 204, col 23 to line 204, col 64 of module orange_draft1: 27007
+  line 243, col 23 to line 243, col 53 of module orange_draft1: 27007
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 205, col 12 to line 205, col 52 of module orange_draft1: 75845
+  line 244, col 23 to line 244, col 61 of module orange_draft1: 27007
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 245, col 12 to line 245, col 52 of module orange_draft1: 75845
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<UserMain line 209, col 1 to line 209, col 8 of module orange_draft1>: 0:120136
+<UserMain line 249, col 1 to line 249, col 8 of module orange_draft1>: 0:120136
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 209, col 16 to line 209, col 33 of module orange_draft1: 150576
+  line 249, col 16 to line 249, col 33 of module orange_draft1: 150576
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 209, col 16 to line 209, col 20 of module orange_draft1: 81020
+  |line 249, col 16 to line 249, col 20 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 210, col 19 to line 210, col 45 of module orange_draft1: 81020
+  line 250, col 19 to line 250, col 45 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 212, col 29 to line 212, col 32 of module orange_draft1: 120136
+  line 252, col 29 to line 252, col 32 of module orange_draft1: 120136
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 211, col 38 to line 211, col 46 of module orange_draft1: 81020
+  line 251, col 38 to line 251, col 46 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 162, col 14 to line 162, col 31 of module orange_draft1: 81020
+  |line 186, col 14 to line 186, col 31 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||line 162, col 14 to line 162, col 20 of module orange_draft1: 81020
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2775:0 @!@!@
-  |||line 149, col 25 to line 149, col 86 of module orange_draft1: 81020:537396
-@!@!@ENDMSG 2775 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 52 to line 149, col 84 of module orange_draft1: 792616
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 149, col 33 to line 149, col 48 of module orange_draft1: 81020
+  ||line 186, col 14 to line 186, col 20 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||line 151, col 5 to line 151, col 51 of module orange_draft1: 81020:201156
+  |||line 173, col 25 to line 173, col 86 of module orange_draft1: 81020:537396
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 7 to line 151, col 24 of module orange_draft1: 456376
+  ||||line 173, col 52 to line 173, col 84 of module orange_draft1: 792616
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 151, col 34 to line 151, col 49 of module orange_draft1: 81020
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||line 162, col 24 to line 162, col 31 of module orange_draft1: 81020
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||line 153, col 13 to line 160, col 1 of module orange_draft1: 81020
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 154, col 5 to line 159, col 35 of module orange_draft1: 456376
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 155, col 9 to line 159, col 35 of module orange_draft1: 31968196
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 155, col 12 to line 155, col 16 of module orange_draft1: 31968196
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 156, col 12 to line 156, col 44 of module orange_draft1: 28854868
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 157, col 12 to line 157, col 42 of module orange_draft1: 16669916
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 158, col 12 to line 158, col 35 of module orange_draft1: 6715948
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 159, col 12 to line 159, col 35 of module orange_draft1: 1338417
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |||||line 154, col 16 to line 154, col 31 of module orange_draft1: 456376
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  ||||line 153, col 23 to line 153, col 29 of module orange_draft1: 81020
+  ||||line 173, col 33 to line 173, col 48 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 149, col 25 to line 149, col 86 of module orange_draft1: 81020:537396
+  |||line 175, col 5 to line 175, col 51 of module orange_draft1: 81020:201156
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 52 to line 149, col 84 of module orange_draft1: 792616
+  ||||line 175, col 7 to line 175, col 24 of module orange_draft1: 456376
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 149, col 33 to line 149, col 48 of module orange_draft1: 81020
+  ||||line 175, col 34 to line 175, col 49 of module orange_draft1: 81020
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 186, col 24 to line 186, col 31 of module orange_draft1: 81020
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 177, col 13 to line 184, col 1 of module orange_draft1: 81020
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 178, col 5 to line 183, col 35 of module orange_draft1: 456376
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 179, col 9 to line 183, col 35 of module orange_draft1: 31968196
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 179, col 12 to line 179, col 16 of module orange_draft1: 31968196
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 180, col 12 to line 180, col 44 of module orange_draft1: 28854868
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 181, col 12 to line 181, col 42 of module orange_draft1: 16669916
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 182, col 12 to line 182, col 35 of module orange_draft1: 6715948
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 183, col 12 to line 183, col 35 of module orange_draft1: 1338417
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 178, col 16 to line 178, col 31 of module orange_draft1: 456376
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 177, col 23 to line 177, col 29 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2775:0 @!@!@
-  |||||line 151, col 5 to line 151, col 51 of module orange_draft1: 81020:537396
+  |||||line 173, col 25 to line 173, col 86 of module orange_draft1: 81020:537396
 @!@!@ENDMSG 2775 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 7 to line 151, col 24 of module orange_draft1: 456376
+  ||||||line 173, col 52 to line 173, col 84 of module orange_draft1: 792616
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||||line 151, col 34 to line 151, col 49 of module orange_draft1: 81020
+  ||||||line 173, col 33 to line 173, col 48 of module orange_draft1: 81020
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |||||line 175, col 5 to line 175, col 51 of module orange_draft1: 81020:537396
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 175, col 7 to line 175, col 24 of module orange_draft1: 456376
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 213, col 27 to line 213, col 30 of module orange_draft1: 120136
+  ||||||line 175, col 34 to line 175, col 49 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 214, col 27 to line 214, col 61 of module orange_draft1: 120136
+  line 253, col 27 to line 253, col 30 of module orange_draft1: 120136
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 215, col 27 to line 215, col 57 of module orange_draft1: 0
+  line 254, col 27 to line 254, col 61 of module orange_draft1: 120136
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 216, col 16 to line 217, col 43 of module orange_draft1: 120136
+  line 255, col 27 to line 255, col 57 of module orange_draft1: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 256, col 16 to line 256, col 81 of module orange_draft1: 120136
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<JoningMain line 221, col 1 to line 221, col 10 of module orange_draft1>: 62085:81020
+<JoningMain line 260, col 1 to line 260, col 10 of module orange_draft1>: 63927:81020
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 221, col 18 to line 221, col 37 of module orange_draft1: 162040
+  line 260, col 18 to line 260, col 37 of module orange_draft1: 162040
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 221, col 18 to line 221, col 22 of module orange_draft1: 81020
+  |line 260, col 18 to line 260, col 22 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 222, col 21 to line 222, col 48 of module orange_draft1: 81020
+  line 261, col 21 to line 261, col 48 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 223, col 29 to line 223, col 60 of module orange_draft1: 73414
+  line 262, col 29 to line 262, col 60 of module orange_draft1: 73414
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 224, col 32 to line 224, col 76 of module orange_draft1: 73414
+  line 263, col 32 to line 263, col 76 of module orange_draft1: 73414
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 225, col 40 to line 230, col 56 of module orange_draft1: 0
+  line 264, col 40 to line 269, col 56 of module orange_draft1: 0
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 233, col 40 to line 233, col 43 of module orange_draft1: 73414
+  line 272, col 40 to line 272, col 43 of module orange_draft1: 73414
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 234, col 40 to line 234, col 60 of module orange_draft1: 73414
+  line 273, col 40 to line 273, col 60 of module orange_draft1: 73414
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 235, col 29 to line 235, col 32 of module orange_draft1: 7606
+  line 274, col 29 to line 274, col 32 of module orange_draft1: 7606
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 236, col 29 to line 236, col 69 of module orange_draft1: 7606
+  line 275, col 29 to line 275, col 69 of module orange_draft1: 7606
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 237, col 18 to line 237, col 54 of module orange_draft1: 81020
+  line 276, col 18 to line 276, col 54 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 238, col 18 to line 238, col 59 of module orange_draft1: 81020
+  line 277, col 18 to line 277, col 56 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2774:0 @!@!@
-<Invariant line 173, col 1 to line 173, col 9 of module orange_draft1>
+<Invariant line 215, col 1 to line 215, col 9 of module orange_draft1>
 @!@!@ENDMSG 2774 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 174, col 5 to line 174, col 20 of module orange_draft1: 81020
+  line 216, col 5 to line 216, col 20 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 174, col 8 to line 174, col 20 of module orange_draft1: 81020
+  |line 216, col 8 to line 216, col 20 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||line 138, col 5 to line 142, col 41 of module orange_draft1: 81020
+  ||line 162, col 5 to line 166, col 41 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |||line 138, col 8 to line 138, col 31 of module orange_draft1: 81020
+  |||line 162, col 8 to line 162, col 28 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |||line 139, col 8 to line 142, col 41 of module orange_draft1: 81020
+  |||line 163, col 8 to line 166, col 41 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 140, col 9 to line 142, col 41 of module orange_draft1: 792616
+  ||||line 164, col 9 to line 166, col 41 of module orange_draft1: 792616
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  ||||line 139, col 17 to line 139, col 32 of module orange_draft1: 81020
+  ||||line 163, col 17 to line 163, col 32 of module orange_draft1: 81020
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2202:0 @!@!@
 End of statistics.
 @!@!@ENDMSG 2202 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(24) at 2024-12-10 01:19:01: 277,002 states generated (2,688,034 s/min), 81,020 distinct states found (786,220 ds/min), 0 states left on queue.
+Progress(24) at 2024-12-10 17:01:35: 277,002 states generated (2,787,675 s/min), 81,020 distinct states found (815,363 ds/min), 0 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
 277002 states generated, 81020 distinct states found, 0 states left on queue.
@@ -428,5 +428,5 @@ The depth of the complete state graph search is 24.
 The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 7 and the 95th percentile is 2).
 @!@!@ENDMSG 2268 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 6187ms at (2024-12-10 01:19:01)
+Finished in 5967ms at (2024-12-10 17:01:35)
 @!@!@ENDMSG 2186 @!@!@

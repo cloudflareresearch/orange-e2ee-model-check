@@ -135,9 +135,11 @@ process Users = 1
 variables
     new_msg = 0;
     new_idx = 0;
+    new_epoch = 0;
     new_pending_adds = 0;
     new_pending_removes = 0;
     target_uid = 0;
+    ignore_msg = 0; \* Flag for not processing a new message (still incr'ing the idx)
 begin
     UserMain:
         while LargestUserEpoch < MaxEpoch do
@@ -146,39 +148,61 @@ begin
                     new_idx := user_states[uid]["idx_in_messages"] + 1;
                     new_msg := messages[new_idx];
 
-                    \* Can only process a message whose epoch matches
-                    \* PROBLEM: DCs receive their own messages after incring their epoch, so this will fail
-                    \* PROBLEM: joining users receive a Welcome with 1 epoch ahead of the Add
                     if new_msg["ty"] \in MlsAddRemoveTags then
-                        assert user_states[uid]["epoch"] = new_msg["epoch"];
+                        \* Every Welcome is followed by an Add. If this User was just welcomed, and this is the
+                        \* corresponding Add, there's no processing to do
+                        if
+                            /\ new_msg["ty"] = "mls_add"
+                            /\ new_msg["target_uid"] = uid
+                            /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
+                        then
+                            ignore_msg := TRUE;
+                        elsif \* Similarly, skip processing is the DC getting their own message
+                            /\ uid = DesignatedCommitter
+                            /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
+                        then
+                            ignore_msg := TRUE;
+                        else \* Otherwise, make sure that the Add/Remove epoch matches the user state's
+                            assert user_states[uid]["epoch"] = new_msg["epoch"];
+                            ignore_msg := FALSE;
+                        end if; 
+                    else \* We always process non Add/Remove messages
+                        ignore_msg := FALSE;
                     end if;
 
                     \* If the message is a user join/leave, we can add to our pending adds/removes
-                    if new_msg["ty"] = "user_joined" then
+                    if new_msg["ty"] = "user_joined" /\ ~ignore_msg then
                         new_pending_adds := user_states[uid]["users_pending_add"] \o <<new_msg["uid"]>>;
                         new_pending_removes := user_states[uid]["users_pending_remove"];
+                        new_epoch := user_states[uid]["epoch"] + 1;
                     elsif new_msg["ty"] = "user_left" then
                         new_pending_adds := user_states[uid]["users_pending_add"];
                         new_pending_removes := user_states[uid]["users_pending_remove"] \o <<new_msg["uid"]>>;
+                        new_epoch := user_states[uid]["epoch"] + 1;
                     \* If the message is an MLS Add/Remove, we can remove from our pending adds/removes
-                    elsif new_msg["ty"] = "mls_add" then
+                    elsif new_msg["ty"] = "mls_add" /\ ~ignore_msg then
                         \* We can just remove the head. Pendings are processed in order
                         assert Head(user_states[uid]["users_pending_add"]) = new_msg["target_uid"];
                         new_pending_adds := Tail(user_states[uid]["users_pending_add"]);
                         new_pending_removes := user_states[uid]["users_pending_remove"];
-                    elsif new_msg["ty"] = "mls_remove" then
+                        new_epoch := user_states[uid]["epoch"] + 1;
+                    elsif new_msg["ty"] = "mls_remove" /\ ~ignore_msg then
                         \* We can just remove the head. Pendings are processed in order
                         assert Head(user_states[uid]["users_pending_remove"]) = new_msg["target_uid"];
                         new_pending_adds := user_states[uid]["users_pending_add"];
                         new_pending_removes := Tail(user_states[uid]["users_pending_remove"]);
+                        new_epoch := user_states[uid]["epoch"] + 1;
                     else
-                        \* It's a Welcome. Doesn't affect pending add/remove
-                        skip;
+                        \* It's a Welcome or we're ignoring the message.
+                        \* Either way, doesn't affect pending add/remove, or epoch
+                        new_pending_adds := user_states[uid]["users_pending_add"];
+                        new_pending_removes := user_states[uid]["users_pending_remove"];
+                        new_epoch := user_states[uid]["epoch"];
                     end if;
 
                     \* Update the user state
                     user_states[uid] := [
-                        epoch |-> user_states[uid]["epoch"] + 1,
+                        epoch |-> new_epoch,
                         idx_in_messages |-> new_idx,
                         users_pending_add |-> new_pending_adds,
                         users_pending_remove |-> new_pending_removes
@@ -228,7 +252,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "64f59e6f" /\ chksum(tla) = "cb30e3a")
+\* BEGIN TRANSLATION (chksum(pcal) = "401cb4be" /\ chksum(tla) = "f5d1171e")
 VARIABLES messages, user_states, next_free_uid, pc
 
 (* define statement *)
@@ -306,11 +330,12 @@ DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
 Invariant ==
     /\ TypeInvariant
 
-VARIABLES new_msg, new_idx, new_pending_adds, new_pending_removes, target_uid, 
-          messages_idx
+VARIABLES new_msg, new_idx, new_epoch, new_pending_adds, new_pending_removes, 
+          target_uid, ignore_msg, messages_idx
 
 vars == << messages, user_states, next_free_uid, pc, new_msg, new_idx, 
-           new_pending_adds, new_pending_removes, target_uid, messages_idx >>
+           new_epoch, new_pending_adds, new_pending_removes, target_uid, 
+           ignore_msg, messages_idx >>
 
 ProcSet == {0} \cup {1} \cup {2}
 
@@ -326,9 +351,11 @@ Init == (* Global variables *)
         (* Process Users *)
         /\ new_msg = 0
         /\ new_idx = 0
+        /\ new_epoch = 0
         /\ new_pending_adds = 0
         /\ new_pending_removes = 0
         /\ target_uid = 0
+        /\ ignore_msg = 0
         (* Process JoiningUsers *)
         /\ messages_idx = 0
         /\ pc = [self \in ProcSet |-> CASE self = 0 -> "CreateJoinLeave"
@@ -346,9 +373,9 @@ CreateJoinLeave == /\ pc[0] = "CreateJoinLeave"
                               /\ pc' = [pc EXCEPT ![0] = "CreateJoinLeave"]
                          ELSE /\ pc' = [pc EXCEPT ![0] = "Done"]
                               /\ UNCHANGED << messages, next_free_uid >>
-                   /\ UNCHANGED << user_states, new_msg, new_idx, 
+                   /\ UNCHANGED << user_states, new_msg, new_idx, new_epoch, 
                                    new_pending_adds, new_pending_removes, 
-                                   target_uid, messages_idx >>
+                                   target_uid, ignore_msg, messages_idx >>
 
 DeliveryService == CreateJoinLeave
 
@@ -358,30 +385,42 @@ UserMain == /\ pc[1] = "UserMain"
                                   /\ new_idx' = user_states[uid]["idx_in_messages"] + 1
                                   /\ new_msg' = messages[new_idx']
                                   /\ IF new_msg'["ty"] \in MlsAddRemoveTags
-                                        THEN /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                       "Failure of assertion at line 153, column 25.")
-                                        ELSE /\ TRUE
-                                  /\ IF new_msg'["ty"] = "user_joined"
+                                        THEN /\ IF /\ new_msg'["ty"] = "mls_add"
+                                                   /\ new_msg'["target_uid"] = uid
+                                                   /\ new_msg'["epoch"] + 1 = user_states[uid]["epoch"]
+                                                   THEN /\ ignore_msg' = TRUE
+                                                   ELSE /\ IF /\ uid = DesignatedCommitter
+                                                              /\ new_msg'["epoch"] + 1 = user_states[uid]["epoch"]
+                                                              THEN /\ ignore_msg' = TRUE
+                                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
+                                                                             "Failure of assertion at line 166, column 29.")
+                                                                   /\ ignore_msg' = FALSE
+                                        ELSE /\ ignore_msg' = FALSE
+                                  /\ IF new_msg'["ty"] = "user_joined" /\ ~ignore_msg'
                                         THEN /\ new_pending_adds' = user_states[uid]["users_pending_add"] \o <<new_msg'["uid"]>>
                                              /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
+                                             /\ new_epoch' = user_states[uid]["epoch"] + 1
                                         ELSE /\ IF new_msg'["ty"] = "user_left"
                                                    THEN /\ new_pending_adds' = user_states[uid]["users_pending_add"]
                                                         /\ new_pending_removes' = user_states[uid]["users_pending_remove"] \o <<new_msg'["uid"]>>
-                                                   ELSE /\ IF new_msg'["ty"] = "mls_add"
+                                                        /\ new_epoch' = user_states[uid]["epoch"] + 1
+                                                   ELSE /\ IF new_msg'["ty"] = "mls_add" /\ ~ignore_msg'
                                                               THEN /\ Assert(Head(user_states[uid]["users_pending_add"]) = new_msg'["target_uid"], 
-                                                                             "Failure of assertion at line 166, column 25.")
+                                                                             "Failure of assertion at line 185, column 25.")
                                                                    /\ new_pending_adds' = Tail(user_states[uid]["users_pending_add"])
                                                                    /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
-                                                              ELSE /\ IF new_msg'["ty"] = "mls_remove"
+                                                                   /\ new_epoch' = user_states[uid]["epoch"] + 1
+                                                              ELSE /\ IF new_msg'["ty"] = "mls_remove" /\ ~ignore_msg'
                                                                          THEN /\ Assert(Head(user_states[uid]["users_pending_remove"]) = new_msg'["target_uid"], 
-                                                                                        "Failure of assertion at line 171, column 25.")
+                                                                                        "Failure of assertion at line 191, column 25.")
                                                                               /\ new_pending_adds' = user_states[uid]["users_pending_add"]
                                                                               /\ new_pending_removes' = Tail(user_states[uid]["users_pending_remove"])
-                                                                         ELSE /\ TRUE
-                                                                              /\ UNCHANGED << new_pending_adds, 
-                                                                                              new_pending_removes >>
+                                                                              /\ new_epoch' = user_states[uid]["epoch"] + 1
+                                                                         ELSE /\ new_pending_adds' = user_states[uid]["users_pending_add"]
+                                                                              /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
+                                                                              /\ new_epoch' = user_states[uid]["epoch"]
                                   /\ user_states' = [user_states EXCEPT ![uid] =                     [
-                                                                                     epoch |-> user_states[uid]["epoch"] + 1,
+                                                                                     epoch |-> new_epoch',
                                                                                      idx_in_messages |-> new_idx',
                                                                                      users_pending_add |-> new_pending_adds',
                                                                                      users_pending_remove |-> new_pending_removes'
@@ -402,12 +441,13 @@ UserMain == /\ pc[1] = "UserMain"
                                                     target_uid |-> target_uid'
                                                 ]
                                             >>
-                             /\ UNCHANGED <<new_msg, new_idx, new_pending_adds, new_pending_removes>>
+                             /\ UNCHANGED <<new_msg, new_idx, new_epoch, new_pending_adds, new_pending_removes, ignore_msg>>
                        /\ pc' = [pc EXCEPT ![1] = "UserMain"]
                   ELSE /\ pc' = [pc EXCEPT ![1] = "Done"]
                        /\ UNCHANGED << messages, user_states, new_msg, new_idx, 
-                                       new_pending_adds, new_pending_removes, 
-                                       target_uid >>
+                                       new_epoch, new_pending_adds, 
+                                       new_pending_removes, target_uid, 
+                                       ignore_msg >>
             /\ UNCHANGED << next_free_uid, messages_idx >>
 
 Users == UserMain
@@ -423,13 +463,13 @@ JoinerMain == /\ pc[2] = "JoinerMain"
                                                    users_pending_remove |-> {}
                                            ])
                          /\ Assert(Len(user_states') = messages[messages_idx']["target_uid"], 
-                                   "Failure of assertion at line 226, column 17.")
+                                   "Failure of assertion at line 250, column 17.")
                     ELSE /\ TRUE
                          /\ UNCHANGED user_states
               /\ pc' = [pc EXCEPT ![2] = "JoinerMain"]
               /\ UNCHANGED << messages, next_free_uid, new_msg, new_idx, 
-                              new_pending_adds, new_pending_removes, 
-                              target_uid >>
+                              new_epoch, new_pending_adds, new_pending_removes, 
+                              target_uid, ignore_msg >>
 
 JoiningUsers == JoinerMain
 
@@ -441,5 +481,5 @@ Spec == Init /\ [][Next]_vars
 
 =============================================================================
 \* Modification History
-\* Last modified Wed Dec 11 02:08:26 CET 2024 by mrosenberg
+\* Last modified Thu Dec 12 16:14:32 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

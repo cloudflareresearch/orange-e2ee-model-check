@@ -34,7 +34,7 @@ define
         \A y \in S :
             x >= y
     
-    Min(S) == IF S = {} THEN 99999999 ELSE CHOOSE x \in S :
+    Min(S) == IF S = {} THEN Assert(FALSE, "min of empty set") ELSE CHOOSE x \in S :
         \A y \in S :
             x <= y
 
@@ -55,7 +55,13 @@ define
         { messages[i]["uid"] : i \in user_joined_idxs }
             \union {1} \* Need to add 1 because it comes by default, not via user_joined
 
-    AllWelcomedUids == { uid \in AllUids : user_states[uid]["welcomed"] = TRUE }
+    \* The set of UIDs which have been sent a welcome. They might not have received it yet.
+    \* TODO: Rename this to something like "users that are able or will be able to participate"
+    AllWelcomedUids == { uid \in AllUids :
+        \E i \in 1..Len(messages) :
+            /\ messages[i]["ty"] = "mls_welcome"
+            /\ messages[i]["target_uid"] = uid
+    } \union {1} \* User 1 is effectively welcomed, but there's no message for it
 
     DeadUids == { uid \in AllUids :
         \E i \in 1..Len(messages):
@@ -105,17 +111,25 @@ define
 
     DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
         Len(user_states[DesignatedCommitter]["users_pending_remove"]) > 0
+        
+    \* The complex way of creating UIDs should be the same as the easy way
+    UidEnumInvariant == AllUids = 1..Len(user_states)
+    
+    \* If the leftmost alvie UID is not welcomed, then the group is stuck. We make sure this is
+    \* impossible in our setup
+    DcInvariant == Min(AliveUids) = Min(AliveWelcomedUids)
 
-    Invariant ==
-        /\ TypeInvariant
-        /\ AllUids = 1..Len(user_states) \* The complex way of creating UIDs should be the same as the easy way
-        /\ Min(AliveUids) = Min(AliveWelcomedUids) \* If the leftmost UID is not welcomed, then the group is stuck. We make sure this is impossible in our setup
-        \*/\ MaxInvariant \/ AllAreJoins
 end define;
 
 \* Invariant: a joined user must always receive a welcome.
 \*     more specifically: no add/remove messages can happen until a Welcome happens
 \* Invariant: the DC is always welcomed
+
+\* Invariant: Every welcomed user is eventually added
+
+\* Invariant: users who have been added do not appear on the users_pending_add lists of up-to-date users
+
+\* A DC should never receive an epoch ahead of its current epoch
 
 \* Adds a "user_joined" event to messages. The UID is the next free UID.
 \* Also adds that new user's state to the list of states. This user has not
@@ -147,7 +161,7 @@ begin
             either
                 append_user_joined_event();
             or
-                \* Can only make a user leave if the group would not become empty
+                \* To avoid deadlock, we only make a user leave if the group would not become empty
                 with i \in AliveWelcomedUids do
                     with j \in (AliveUids \ {i}) do
                         append_user_left_event(j);
@@ -183,23 +197,25 @@ begin
                     new_msg := messages[new_idx];
 
                     if new_msg["ty"] \in MlsAddRemoveTags then
-                        \* Make sure that this user isn't being shown an Add/Remove before they've been Welcomed
-                        \* It should be impossible for that ordering to occur
-                        assert user_states[uid]["welcomed"] = TRUE;
-                        new_welcomed := user_states[uid]["welcomed"]; \* Unchanged
-                        nonwelcomed_to_welcomed := FALSE; \* This user was already welcomed
+                        \* This is not a Welcome message, so welcomed status doesn't change
+                        new_welcomed := user_states[uid]["welcomed"];
+                        nonwelcomed_to_welcomed := FALSE;
 
-                        \* Every Welcome is followed by an Add. If this User was just welcomed, and this is the
-                        \* corresponding Add, there's no processing to do
+                        \* Skip processing this message if some conditions are satisfied
                         if
-                            /\ new_msg["ty"] = "mls_add"
-                            /\ new_msg["target_uid"] = uid
-                            /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
-                        then
-                            ignore_msg := TRUE;
-                        elsif \* Similarly, skip processing is the DC getting their own message
-                            /\ uid = DesignatedCommitter
-                            /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
+                            \* Every Welcome is followed by an Add. If this User was just welcomed, and this is the
+                            \* corresponding Add, there's no processing to do
+                            \/ /\ new_msg["ty"] = "mls_add"
+                               /\ new_msg["target_uid"] = uid
+                               /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
+                            \* Similarly, skip processing is the DC getting their own message
+                            \/ /\ uid = DesignatedCommitter
+                               \* Note: a DC's own Add/Remove could be far behind the DC's current epoch. This
+                               \* happens if the DC sent many Adds/Removes before receiving any
+                               /\ new_msg["epoch"] # user_states[uid]["epoch"]
+                            \* Finally, ignore if not welcomed and just observing an Add/Remove for someone
+                            \/    user_states[uid]["welcomed"] = FALSE
+                            
                         then
                             ignore_msg := TRUE;
                         else \* Otherwise, make sure that the Add/Remove epoch matches the user state's
@@ -217,7 +233,6 @@ begin
                             /\ new_msg["target_uid"] = uid
                             /\ user_states[uid]["welcomed"] = FALSE
                         then
-                            print("User got welcomed!");
                             new_welcomed := TRUE;
                             nonwelcomed_to_welcomed := TRUE;
                         else
@@ -230,28 +245,18 @@ begin
                     if new_msg["ty"] = "user_joined" /\ ~ignore_msg then
                         new_pending_adds := Append(user_states[uid]["users_pending_add"], new_msg["uid"]);
                         new_pending_removes := user_states[uid]["users_pending_remove"];
-                        new_epoch := user_states[uid]["epoch"] + 1;
+                        new_epoch := user_states[uid]["epoch"];
                     elsif new_msg["ty"] = "user_left" then
                         new_pending_adds := user_states[uid]["users_pending_add"];
                         new_pending_removes := Append(user_states[uid]["users_pending_remove"], new_msg["uid"]);
-                        new_epoch := user_states[uid]["epoch"] + 1;
+                        new_epoch := user_states[uid]["epoch"];
                     \* If the message is an MLS Add/Remove, we can remove from our pending adds/removes
                     elsif new_msg["ty"] = "mls_add" /\ ~ignore_msg then
-                        (*
-                        print("in Add. User state is:");
-                        print(user_states[uid]);
-                        print("uid is");
-                        print(uid);
-                        print("DC is");
-                        print(DesignatedCommitter);
-                        print("my epoch");
-                        print(user_states[uid]["epoch"]);
-                        print("msg epoch");
-                        print(new_msg["epoch"]);*)
                         \* We can just remove the head. Pendings are processed in order
                         assert Head(user_states[uid]["users_pending_add"]) = new_msg["target_uid"];
                         new_pending_adds := Tail(user_states[uid]["users_pending_add"]);
                         new_pending_removes := user_states[uid]["users_pending_remove"];
+                        \* Add/Remove also increments our epoch
                         new_epoch := user_states[uid]["epoch"] + 1;
                     elsif new_msg["ty"] = "mls_remove" /\ ~ignore_msg then
                         \* We can just remove the head. Pendings are processed in order
@@ -289,6 +294,8 @@ begin
                 new_pending_adds := Tail(user_states[DesignatedCommitter]["users_pending_add"]);
                 new_epoch := user_states[DesignatedCommitter]["epoch"] + 1;
                 \* Add a Welcome and an Add to messages
+                \* TODO: make this non-atomic. That is, allow there to be a break between the Welcome
+                \*       and the Add
                 messages := messages \o <<
                     [
                         ty |-> "mls_welcome",
@@ -317,7 +324,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "6e605c14" /\ chksum(tla) = "627e6712")
+\* BEGIN TRANSLATION (chksum(pcal) = "84b61121" /\ chksum(tla) = "d000d059")
 VARIABLES messages, user_states, next_free_uid, pc
 
 (* define statement *)
@@ -325,7 +332,7 @@ Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
     \A y \in S :
         x >= y
 
-Min(S) == IF S = {} THEN 99999999 ELSE CHOOSE x \in S :
+Min(S) == IF S = {} THEN Assert(FALSE, "min of empty set") ELSE CHOOSE x \in S :
     \A y \in S :
         x <= y
 
@@ -346,7 +353,13 @@ IN
     { messages[i]["uid"] : i \in user_joined_idxs }
         \union {1}
 
-AllWelcomedUids == { uid \in AllUids : user_states[uid]["welcomed"] = TRUE }
+
+
+AllWelcomedUids == { uid \in AllUids :
+    \E i \in 1..Len(messages) :
+        /\ messages[i]["ty"] = "mls_welcome"
+        /\ messages[i]["target_uid"] = uid
+} \union {1}
 
 DeadUids == { uid \in AllUids :
     \E i \in 1..Len(messages):
@@ -397,10 +410,12 @@ DcHasPendingAdds == IF AliveWelcomedUids = {} THEN FALSE ELSE
 DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
     Len(user_states[DesignatedCommitter]["users_pending_remove"]) > 0
 
-Invariant ==
-    /\ TypeInvariant
-    /\ AllUids = 1..Len(user_states)
-    /\ Min(AliveUids) = Min(AliveWelcomedUids)
+
+UidEnumInvariant == AllUids = 1..Len(user_states)
+
+
+
+DcInvariant == Min(AliveUids) = Min(AliveWelcomedUids)
 
 VARIABLES new_msg, new_idx, new_welcomed, new_epoch, new_pending_adds, 
           new_pending_removes, nonwelcomed_to_welcomed, ignore_msg, 
@@ -467,46 +482,47 @@ UserMain == /\ pc[1] = "UserMain"
                                   /\ new_idx' = user_states[uid]["idx_in_messages"] + 1
                                   /\ new_msg' = messages[new_idx']
                                   /\ IF new_msg'["ty"] \in MlsAddRemoveTags
-                                        THEN /\ Assert(user_states[uid]["welcomed"] = TRUE, 
-                                                       "Failure of assertion at line 188, column 25.")
-                                             /\ new_welcomed' = user_states[uid]["welcomed"]
+                                        THEN /\ new_welcomed' = user_states[uid]["welcomed"]
                                              /\ nonwelcomed_to_welcomed' = FALSE
-                                             /\ IF /\ new_msg'["ty"] = "mls_add"
-                                                   /\ new_msg'["target_uid"] = uid
-                                                   /\ new_msg'["epoch"] + 1 = user_states[uid]["epoch"]
+                                             /\ IF \/ /\ new_msg'["ty"] = "mls_add"
+                                                      /\ new_msg'["target_uid"] = uid
+                                                      /\ new_msg'["epoch"] + 1 = user_states[uid]["epoch"]
+                                                   
+                                                   \/ /\ uid = DesignatedCommitter
+                                                   
+                                                   
+                                                      /\ new_msg'["epoch"] # user_states[uid]["epoch"]
+                                                   
+                                                   \/    user_states[uid]["welcomed"] = FALSE
                                                    THEN /\ ignore_msg' = TRUE
-                                                   ELSE /\ IF /\ uid = DesignatedCommitter
-                                                              /\ new_msg'["epoch"] + 1 = user_states[uid]["epoch"]
-                                                              THEN /\ ignore_msg' = TRUE
-                                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                                             "Failure of assertion at line 206, column 29.")
-                                                                   /\ ignore_msg' = FALSE
+                                                   ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
+                                                                  "Failure of assertion at line 222, column 29.")
+                                                        /\ ignore_msg' = FALSE
                                         ELSE /\ ignore_msg' = FALSE
                                              /\ IF /\ new_msg'["ty"] = "mls_welcome"
                                                    /\ new_msg'["target_uid"] = uid
                                                    /\ user_states[uid]["welcomed"] = FALSE
-                                                   THEN /\ PrintT(("User got welcomed!"))
-                                                        /\ new_welcomed' = TRUE
+                                                   THEN /\ new_welcomed' = TRUE
                                                         /\ nonwelcomed_to_welcomed' = TRUE
                                                    ELSE /\ new_welcomed' = user_states[uid]["welcomed"]
                                                         /\ nonwelcomed_to_welcomed' = FALSE
                                   /\ IF new_msg'["ty"] = "user_joined" /\ ~ignore_msg'
                                         THEN /\ new_pending_adds' = Append(user_states[uid]["users_pending_add"], new_msg'["uid"])
                                              /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
-                                             /\ new_epoch' = user_states[uid]["epoch"] + 1
+                                             /\ new_epoch' = user_states[uid]["epoch"]
                                         ELSE /\ IF new_msg'["ty"] = "user_left"
                                                    THEN /\ new_pending_adds' = user_states[uid]["users_pending_add"]
                                                         /\ new_pending_removes' = Append(user_states[uid]["users_pending_remove"], new_msg'["uid"])
-                                                        /\ new_epoch' = user_states[uid]["epoch"] + 1
+                                                        /\ new_epoch' = user_states[uid]["epoch"]
                                                    ELSE /\ IF new_msg'["ty"] = "mls_add" /\ ~ignore_msg'
                                                               THEN /\ Assert(Head(user_states[uid]["users_pending_add"]) = new_msg'["target_uid"], 
-                                                                             "Failure of assertion at line 252, column 25.")
+                                                                             "Failure of assertion at line 256, column 25.")
                                                                    /\ new_pending_adds' = Tail(user_states[uid]["users_pending_add"])
                                                                    /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
                                                                    /\ new_epoch' = user_states[uid]["epoch"] + 1
                                                               ELSE /\ IF new_msg'["ty"] = "mls_remove" /\ ~ignore_msg'
                                                                          THEN /\ Assert(Head(user_states[uid]["users_pending_remove"]) = new_msg'["target_uid"], 
-                                                                                        "Failure of assertion at line 258, column 25.")
+                                                                                        "Failure of assertion at line 263, column 25.")
                                                                               /\ new_pending_adds' = user_states[uid]["users_pending_add"]
                                                                               /\ new_pending_removes' = Tail(user_states[uid]["users_pending_remove"])
                                                                               /\ new_epoch' = user_states[uid]["epoch"] + 1
@@ -576,5 +592,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Fri Dec 13 02:34:51 CET 2024 by mrosenberg
+\* Last modified Fri Dec 13 17:01:57 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

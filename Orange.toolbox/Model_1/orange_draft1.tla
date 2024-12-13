@@ -1,7 +1,7 @@
 --------------------------- MODULE orange_draft1 ---------------------------
 
 EXTENDS Integers, Sequences, TLC, FiniteSets
-CONSTANT MaxTotalUsers, MaxEpoch, NULL
+CONSTANT MaxTotalUsers, NULL
 
 JoinLeaveTags == { "user_left", "user_joined" }
 JoinLeaveType == [ ty: JoinLeaveTags, uid: Nat ]
@@ -190,7 +190,8 @@ variables
     target_uid = 0;
 begin
     UserMain:
-        while LargestUserEpoch < MaxEpoch do
+        \* Loop until all users have been added and everyone is up to date
+        while next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {} do
             either \* Have a user with unread messages process 1 message
                 with uid \in UsersWithUnreads do
                     new_idx := user_states[uid]["idx_in_messages"] + 1;
@@ -293,22 +294,7 @@ begin
                 target_uid := Head(user_states[DesignatedCommitter]["users_pending_add"]);
                 new_pending_adds := Tail(user_states[DesignatedCommitter]["users_pending_add"]);
                 new_epoch := user_states[DesignatedCommitter]["epoch"] + 1;
-                \* Add a Welcome and an Add to messages
-                \* TODO: make this non-atomic. That is, allow there to be a break between the Welcome
-                \*       and the Add
-                messages := messages \o <<
-                    [
-                        ty |-> "mls_welcome",
-                        target_uid |-> target_uid,
-                        epoch |-> new_epoch
-                    ],
-                    [
-                        ty |-> "mls_add",
-                        epoch |-> new_epoch - 1,
-                        target_uid |-> target_uid
-                    ]
-                >>;
-                
+
                 \* Update the DC state. All other vars are unchanged
                 new_idx := user_states[DesignatedCommitter]["idx_in_messages"];
                 new_welcomed := user_states[DesignatedCommitter]["welcomed"];
@@ -320,11 +306,24 @@ begin
                     users_pending_add |-> new_pending_adds,
                     users_pending_remove |-> new_pending_removes
                 ];
+                
+                \* Append a Welcome then an Add to messages
+                messages := Append(messages, [
+                        ty |-> "mls_welcome",
+                        target_uid |-> target_uid,
+                        epoch |-> new_epoch
+                ]);
+              DcSendAdd: \* Label is here so that things can happen between the Welcome and Add
+                messages := Append(messages, [
+                        ty |-> "mls_add",
+                        epoch |-> new_epoch - 1,
+                        target_uid |-> target_uid
+                ]);
             end either;
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "84b61121" /\ chksum(tla) = "d000d059")
+\* BEGIN TRANSLATION (chksum(pcal) = "4fb55349" /\ chksum(tla) = "f9d429b6")
 VARIABLES messages, user_states, next_free_uid, pc
 
 (* define statement *)
@@ -477,7 +476,7 @@ CreateJoinLeave == /\ pc[0] = "CreateJoinLeave"
 DeliveryService == CreateJoinLeave
 
 UserMain == /\ pc[1] = "UserMain"
-            /\ IF LargestUserEpoch < MaxEpoch
+            /\ IF next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {}
                   THEN /\ \/ /\ \E uid \in UsersWithUnreads:
                                   /\ new_idx' = user_states[uid]["idx_in_messages"] + 1
                                   /\ new_msg' = messages[new_idx']
@@ -496,7 +495,7 @@ UserMain == /\ pc[1] = "UserMain"
                                                    \/    user_states[uid]["welcomed"] = FALSE
                                                    THEN /\ ignore_msg' = TRUE
                                                    ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                                  "Failure of assertion at line 222, column 29.")
+                                                                  "Failure of assertion at line 223, column 29.")
                                                         /\ ignore_msg' = FALSE
                                         ELSE /\ ignore_msg' = FALSE
                                              /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -516,13 +515,13 @@ UserMain == /\ pc[1] = "UserMain"
                                                         /\ new_epoch' = user_states[uid]["epoch"]
                                                    ELSE /\ IF new_msg'["ty"] = "mls_add" /\ ~ignore_msg'
                                                               THEN /\ Assert(Head(user_states[uid]["users_pending_add"]) = new_msg'["target_uid"], 
-                                                                             "Failure of assertion at line 256, column 25.")
+                                                                             "Failure of assertion at line 257, column 25.")
                                                                    /\ new_pending_adds' = Tail(user_states[uid]["users_pending_add"])
                                                                    /\ new_pending_removes' = user_states[uid]["users_pending_remove"]
                                                                    /\ new_epoch' = user_states[uid]["epoch"] + 1
                                                               ELSE /\ IF new_msg'["ty"] = "mls_remove" /\ ~ignore_msg'
                                                                          THEN /\ Assert(Head(user_states[uid]["users_pending_remove"]) = new_msg'["target_uid"], 
-                                                                                        "Failure of assertion at line 263, column 25.")
+                                                                                        "Failure of assertion at line 264, column 25.")
                                                                               /\ new_pending_adds' = user_states[uid]["users_pending_add"]
                                                                               /\ new_pending_removes' = Tail(user_states[uid]["users_pending_remove"])
                                                                               /\ new_epoch' = user_states[uid]["epoch"] + 1
@@ -538,23 +537,12 @@ UserMain == /\ pc[1] = "UserMain"
                                                                                      users_pending_add |-> new_pending_adds',
                                                                                      users_pending_remove |-> new_pending_removes'
                                                                                  ]]
+                             /\ pc' = [pc EXCEPT ![1] = "UserMain"]
                              /\ UNCHANGED <<messages, target_uid>>
                           \/ /\ DcHasPendingAdds /\ DcIsAware
                              /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_add"])
                              /\ new_pending_adds' = Tail(user_states[DesignatedCommitter]["users_pending_add"])
                              /\ new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
-                             /\ messages' =             messages \o <<
-                                                [
-                                                    ty |-> "mls_welcome",
-                                                    target_uid |-> target_uid',
-                                                    epoch |-> new_epoch'
-                                                ],
-                                                [
-                                                    ty |-> "mls_add",
-                                                    epoch |-> new_epoch' - 1,
-                                                    target_uid |-> target_uid'
-                                                ]
-                                            >>
                              /\ new_idx' = user_states[DesignatedCommitter]["idx_in_messages"]
                              /\ new_welcomed' = user_states[DesignatedCommitter]["welcomed"]
                              /\ new_pending_removes' = user_states[DesignatedCommitter]["users_pending_remove"]
@@ -565,8 +553,13 @@ UserMain == /\ pc[1] = "UserMain"
                                                                                                 users_pending_add |-> new_pending_adds',
                                                                                                 users_pending_remove |-> new_pending_removes'
                                                                                             ]]
+                             /\ messages' =             Append(messages, [
+                                                    ty |-> "mls_welcome",
+                                                    target_uid |-> target_uid',
+                                                    epoch |-> new_epoch'
+                                            ])
+                             /\ pc' = [pc EXCEPT ![1] = "DcSendAdd"]
                              /\ UNCHANGED <<new_msg, nonwelcomed_to_welcomed, ignore_msg>>
-                       /\ pc' = [pc EXCEPT ![1] = "UserMain"]
                   ELSE /\ pc' = [pc EXCEPT ![1] = "Done"]
                        /\ UNCHANGED << messages, user_states, new_msg, new_idx, 
                                        new_welcomed, new_epoch, 
@@ -575,7 +568,19 @@ UserMain == /\ pc[1] = "UserMain"
                                        target_uid >>
             /\ UNCHANGED next_free_uid
 
-Users == UserMain
+DcSendAdd == /\ pc[1] = "DcSendAdd"
+             /\ messages' =             Append(messages, [
+                                    ty |-> "mls_add",
+                                    epoch |-> new_epoch - 1,
+                                    target_uid |-> target_uid
+                            ])
+             /\ pc' = [pc EXCEPT ![1] = "UserMain"]
+             /\ UNCHANGED << user_states, next_free_uid, new_msg, new_idx, 
+                             new_welcomed, new_epoch, new_pending_adds, 
+                             new_pending_removes, nonwelcomed_to_welcomed, 
+                             ignore_msg, target_uid >>
+
+Users == UserMain \/ DcSendAdd
 
 (* Allow infinite stuttering to prevent deadlock on termination. *)
 Terminating == /\ \A self \in ProcSet: pc[self] = "Done"
@@ -592,5 +597,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Fri Dec 13 17:01:57 CET 2024 by mrosenberg
+\* Last modified Fri Dec 13 17:19:41 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

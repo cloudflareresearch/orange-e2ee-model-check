@@ -2,15 +2,15 @@
 EXTENDS orange_draft1, TLC
 
 \* CONSTANT definitions @modelParameterConstants:0MaxTotalUsers
-const_1734393283080460000 == 
+const_1734435334460516000 == 
 5
 ----
 
 \* CONSTANT definitions @modelParameterConstants:1NULL
-const_1734393283080461000 == 
+const_1734435334461517000 == 
 -1
 ----
 
 =============================================================================
 \* Modification History
-\* Created Tue Dec 17 00:54:43 CET 2024 by mrosenberg
+\* Created Tue Dec 17 12:35:34 CET 2024 by mrosenberg

@@ -28,6 +28,9 @@ variables
         users_pending_remove |-> <<>>
     ]>>;
     next_free_uid = 2;
+    \* Flag for when the DC is in the middle of a Welcome+Add sequence (ie might
+    \* still have messages to send)
+    dc_is_currently_adding = FALSE;
     \* For debugging purposes
     my_uid = 0;
     cur_branch = "";
@@ -124,7 +127,11 @@ define
     \* the DC has no more messages to send
     \* TODO: Check if we need to check that DC is aware in this condition. I think not because it's
     \*       implied by UsersWithUnreads={}
-    TerminationCondition == next_free_uid = MaxTotalUsers /\ UsersWithUnreads = {} /\ ~DcHasPendings
+    TerminationCondition ==
+        /\ next_free_uid = MaxTotalUsers
+        /\ UsersWithUnreads = {}
+        /\ ~DcHasPendings
+        /\ ~dc_is_currently_adding
         
     \* The complex way of creating UIDs should be the same as the easy way
     UidEnumInvariant == AllUids = 1..Len(user_states)
@@ -333,6 +340,8 @@ begin
                 my_uid := DesignatedCommitter;
                 dc_uid_at_start_of_add := DesignatedCommitter;
                 cur_branch := "Adding pendings: Welcome";
+                \* Mark that we are adding. This will be set to false once the Add is sent
+                dc_is_currently_adding := TRUE;
                 \* Pop the joining user from the pending list
                 target_uid := Head(user_states[DesignatedCommitter]["users_pending_add"]);
                 dc_new_pending_adds := Tail(user_states[DesignatedCommitter]["users_pending_add"]);
@@ -376,6 +385,9 @@ begin
                             sender |-> dc_uid_at_start_of_add
                     ]);
                 end if;
+
+                \* We're done with the Welcome+Add op
+                dc_is_currently_adding := FALSE;
             else \* DC has a pending Remove
                 cur_branch := "Removing pendings";
                 my_uid := DesignatedCommitter;
@@ -407,8 +419,9 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "a0583c29" /\ chksum(tla) = "d5d0beeb")
-VARIABLES messages, user_states, next_free_uid, my_uid, cur_branch, pc
+\* BEGIN TRANSLATION (chksum(pcal) = "90e752e6" /\ chksum(tla) = "25f5375b")
+VARIABLES messages, user_states, next_free_uid, dc_is_currently_adding, 
+          my_uid, cur_branch, pc
 
 (* define statement *)
 Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
@@ -502,7 +515,11 @@ DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
 
 
 
-TerminationCondition == next_free_uid = MaxTotalUsers /\ UsersWithUnreads = {} /\ ~DcHasPendings
+TerminationCondition ==
+    /\ next_free_uid = MaxTotalUsers
+    /\ UsersWithUnreads = {}
+    /\ ~DcHasPendings
+    /\ ~dc_is_currently_adding
 
 
 UidEnumInvariant == AllUids = 1..Len(user_states)
@@ -516,11 +533,12 @@ VARIABLES new_msg, new_idx, new_welcomed, new_epoch, new_pending_adds,
           dc_new_idx, dc_new_welcomed, dc_new_epoch, dc_new_pending_adds, 
           dc_new_pending_removes, dc_uid_at_start_of_add, target_uid
 
-vars == << messages, user_states, next_free_uid, my_uid, cur_branch, pc, 
-           new_msg, new_idx, new_welcomed, new_epoch, new_pending_adds, 
-           new_pending_removes, nonwelcomed_to_welcomed, ignore_msg, 
-           dc_new_idx, dc_new_welcomed, dc_new_epoch, dc_new_pending_adds, 
-           dc_new_pending_removes, dc_uid_at_start_of_add, target_uid >>
+vars == << messages, user_states, next_free_uid, dc_is_currently_adding, 
+           my_uid, cur_branch, pc, new_msg, new_idx, new_welcomed, new_epoch, 
+           new_pending_adds, new_pending_removes, nonwelcomed_to_welcomed, 
+           ignore_msg, dc_new_idx, dc_new_welcomed, dc_new_epoch, 
+           dc_new_pending_adds, dc_new_pending_removes, 
+           dc_uid_at_start_of_add, target_uid >>
 
 ProcSet == {0} \cup {1} \cup {2}
 
@@ -534,6 +552,7 @@ Init == (* Global variables *)
                              users_pending_remove |-> <<>>
                          ]>>
         /\ next_free_uid = 2
+        /\ dc_is_currently_adding = FALSE
         /\ my_uid = 0
         /\ cur_branch = ""
         (* Process Users *)
@@ -576,9 +595,9 @@ CreateJoinLeave == /\ pc[0] = "CreateJoinLeave"
                          ELSE /\ pc' = [pc EXCEPT ![0] = "Done"]
                               /\ UNCHANGED << messages, user_states, 
                                               next_free_uid >>
-                   /\ UNCHANGED << my_uid, cur_branch, new_msg, new_idx, 
-                                   new_welcomed, new_epoch, new_pending_adds, 
-                                   new_pending_removes, 
+                   /\ UNCHANGED << dc_is_currently_adding, my_uid, cur_branch, 
+                                   new_msg, new_idx, new_welcomed, new_epoch, 
+                                   new_pending_adds, new_pending_removes, 
                                    nonwelcomed_to_welcomed, ignore_msg, 
                                    dc_new_idx, dc_new_welcomed, dc_new_epoch, 
                                    dc_new_pending_adds, dc_new_pending_removes, 
@@ -608,7 +627,7 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 242, column 25.")
+                                                            "Failure of assertion at line 249, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -659,10 +678,10 @@ UserMain == /\ pc[1] = "UserMain"
                                        new_epoch, new_pending_adds, 
                                        new_pending_removes, 
                                        nonwelcomed_to_welcomed, ignore_msg >>
-            /\ UNCHANGED << messages, next_free_uid, dc_new_idx, 
-                            dc_new_welcomed, dc_new_epoch, dc_new_pending_adds, 
-                            dc_new_pending_removes, dc_uid_at_start_of_add, 
-                            target_uid >>
+            /\ UNCHANGED << messages, next_free_uid, dc_is_currently_adding, 
+                            dc_new_idx, dc_new_welcomed, dc_new_epoch, 
+                            dc_new_pending_adds, dc_new_pending_removes, 
+                            dc_uid_at_start_of_add, target_uid >>
 
 Users == UserMain
 
@@ -673,6 +692,7 @@ DcMain == /\ pc[2] = "DcMain"
                            THEN /\ my_uid' = DesignatedCommitter
                                 /\ dc_uid_at_start_of_add' = DesignatedCommitter
                                 /\ cur_branch' = "Adding pendings: Welcome"
+                                /\ dc_is_currently_adding' = TRUE
                                 /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_add"])
                                 /\ dc_new_pending_adds' = Tail(user_states[DesignatedCommitter]["users_pending_add"])
                                 /\ dc_new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
@@ -715,11 +735,13 @@ DcMain == /\ pc[2] = "DcMain"
                                                        sender |-> DesignatedCommitter
                                                ])
                                 /\ pc' = [pc EXCEPT ![2] = "DcMain"]
-                                /\ UNCHANGED dc_uid_at_start_of_add
+                                /\ UNCHANGED << dc_is_currently_adding, 
+                                                dc_uid_at_start_of_add >>
                 ELSE /\ pc' = [pc EXCEPT ![2] = "Done"]
-                     /\ UNCHANGED << messages, user_states, my_uid, cur_branch, 
-                                     dc_new_idx, dc_new_welcomed, dc_new_epoch, 
-                                     dc_new_pending_adds, 
+                     /\ UNCHANGED << messages, user_states, 
+                                     dc_is_currently_adding, my_uid, 
+                                     cur_branch, dc_new_idx, dc_new_welcomed, 
+                                     dc_new_epoch, dc_new_pending_adds, 
                                      dc_new_pending_removes, 
                                      dc_uid_at_start_of_add, target_uid >>
           /\ UNCHANGED << next_free_uid, new_msg, new_idx, new_welcomed, 
@@ -738,6 +760,7 @@ DcSendAdd == /\ pc[2] = "DcSendAdd"
                                                target_uid |-> target_uid,
                                                sender |-> dc_uid_at_start_of_add
                                        ])
+             /\ dc_is_currently_adding' = FALSE
              /\ pc' = [pc EXCEPT ![2] = "DcMain"]
              /\ UNCHANGED << user_states, next_free_uid, new_msg, new_idx, 
                              new_welcomed, new_epoch, new_pending_adds, 
@@ -764,5 +787,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Tue Dec 17 00:54:40 CET 2024 by mrosenberg
+\* Last modified Tue Dec 17 12:35:30 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

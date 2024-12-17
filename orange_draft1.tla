@@ -118,6 +118,14 @@ define
     DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
         Len(user_states[DesignatedCommitter]["users_pending_remove"]) > 0
         
+    DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
+    
+    \* Our simulation is done once all users have been added, every (alive) user is up to date, and
+    \* the DC has no more messages to send
+    \* TODO: Check if we need to check that DC is aware in this condition. I think not because it's
+    \*       implied by UsersWithUnreads={}
+    TerminationCondition == next_free_uid = MaxTotalUsers /\ UsersWithUnreads = {} /\ ~DcHasPendings
+        
     \* The complex way of creating UIDs should be the same as the easy way
     UidEnumInvariant == AllUids = 1..Len(user_states)
     
@@ -167,6 +175,7 @@ end macro;
 process DeliveryService = 0
 begin
     CreateJoinLeave:
+        \* Loop until all users have been added
         while next_free_uid < MaxTotalUsers do
             either
                 append_user_joined_event();
@@ -199,8 +208,7 @@ variables
     ignore_msg = FALSE;
 begin
     UserMain:
-        \* Loop until all users have been added and everyone is up to date
-        while next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {} do
+        while ~TerminationCondition do
             \* Have a user with unread messages process 1 message
             with uid \in UsersWithUnreads do
                 cur_branch := "Reading unreads";
@@ -317,9 +325,11 @@ variables
     target_uid = 0;
 begin
     DcMain:
-        while next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {} do
-            either \* Make the DC send an Add if one is pending
-                await DcHasPendingAdds /\ DcIsAware;
+        while ~TerminationCondition do
+            await DcHasPendings /\ DcIsAware;
+             \* Make the DC handle pending Adds first. Adds need to follow Welcomes always. If the
+             \* last DC died, we need to start with the Adds.
+            if DcHasPendingAdds then
                 my_uid := DesignatedCommitter;
                 dc_uid_at_start_of_add := DesignatedCommitter;
                 cur_branch := "Adding pendings: Welcome";
@@ -366,8 +376,7 @@ begin
                             sender |-> dc_uid_at_start_of_add
                     ]);
                 end if;
-            or \* Make the DC send a Remove if one is pending
-                await DcHasPendingRemoves /\ DcIsAware;
+            else \* DC has a pending Remove
                 cur_branch := "Removing pendings";
                 my_uid := DesignatedCommitter;
                 \* Pop the joining user from the pending list
@@ -394,11 +403,11 @@ begin
                         target_uid |-> target_uid,
                         sender |-> DesignatedCommitter
                 ]);
-            end either;
+            end if;
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "f2863549" /\ chksum(tla) = "57156f05")
+\* BEGIN TRANSLATION (chksum(pcal) = "a0583c29" /\ chksum(tla) = "d5d0beeb")
 VARIABLES messages, user_states, next_free_uid, my_uid, cur_branch, pc
 
 (* define statement *)
@@ -487,6 +496,14 @@ DcHasPendingAdds == IF AliveWelcomedUids = {} THEN FALSE ELSE
 DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
     Len(user_states[DesignatedCommitter]["users_pending_remove"]) > 0
 
+DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
+
+
+
+
+
+TerminationCondition == next_free_uid = MaxTotalUsers /\ UsersWithUnreads = {} /\ ~DcHasPendings
+
 
 UidEnumInvariant == AllUids = 1..Len(user_states)
 
@@ -570,7 +587,7 @@ CreateJoinLeave == /\ pc[0] = "CreateJoinLeave"
 DeliveryService == CreateJoinLeave
 
 UserMain == /\ pc[1] = "UserMain"
-            /\ IF next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {}
+            /\ IF ~TerminationCondition
                   THEN /\ \E uid \in UsersWithUnreads:
                             /\ cur_branch' = "Reading unreads"
                             /\ my_uid' = uid
@@ -591,7 +608,7 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 234, column 25.")
+                                                            "Failure of assertion at line 242, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -650,55 +667,55 @@ UserMain == /\ pc[1] = "UserMain"
 Users == UserMain
 
 DcMain == /\ pc[2] = "DcMain"
-          /\ IF next_free_uid < MaxTotalUsers \/ UsersWithUnreads # {}
-                THEN /\ \/ /\ DcHasPendingAdds /\ DcIsAware
-                           /\ my_uid' = DesignatedCommitter
-                           /\ dc_uid_at_start_of_add' = DesignatedCommitter
-                           /\ cur_branch' = "Adding pendings: Welcome"
-                           /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_add"])
-                           /\ dc_new_pending_adds' = Tail(user_states[DesignatedCommitter]["users_pending_add"])
-                           /\ dc_new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
-                           /\ dc_new_idx' = user_states[DesignatedCommitter]["idx_in_messages"]
-                           /\ dc_new_welcomed' = user_states[DesignatedCommitter]["welcomed"]
-                           /\ dc_new_pending_removes' = user_states[DesignatedCommitter]["users_pending_remove"]
-                           /\ user_states' = [user_states EXCEPT ![DesignatedCommitter] =                                     [
-                                                                                              welcomed |-> dc_new_welcomed',
-                                                                                              epoch |-> dc_new_epoch',
-                                                                                              idx_in_messages |-> dc_new_idx',
-                                                                                              users_pending_add |-> dc_new_pending_adds',
-                                                                                              users_pending_remove |-> dc_new_pending_removes'
-                                                                                          ]]
-                           /\ messages' =             Append(messages, [
-                                                  ty |-> "mls_welcome",
-                                                  target_uid |-> target_uid',
-                                                  epoch |-> dc_new_epoch',
-                                                  sender |-> DesignatedCommitter
-                                          ])
-                           /\ pc' = [pc EXCEPT ![2] = "DcSendAdd"]
-                        \/ /\ DcHasPendingRemoves /\ DcIsAware
-                           /\ cur_branch' = "Removing pendings"
-                           /\ my_uid' = DesignatedCommitter
-                           /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_remove"])
-                           /\ dc_new_pending_removes' = Tail(user_states[DesignatedCommitter]["users_pending_remove"])
-                           /\ dc_new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
-                           /\ dc_new_idx' = user_states[DesignatedCommitter]["idx_in_messages"]
-                           /\ dc_new_welcomed' = user_states[DesignatedCommitter]["welcomed"]
-                           /\ dc_new_pending_adds' = user_states[DesignatedCommitter]["users_pending_add"]
-                           /\ user_states' = [user_states EXCEPT ![DesignatedCommitter] =                                     [
-                                                                                              welcomed |-> dc_new_welcomed',
-                                                                                              epoch |-> dc_new_epoch',
-                                                                                              idx_in_messages |-> dc_new_idx',
-                                                                                              users_pending_add |-> dc_new_pending_adds',
-                                                                                              users_pending_remove |-> dc_new_pending_removes'
-                                                                                          ]]
-                           /\ messages' =             Append(messages, [
-                                                  ty |-> "mls_remove",
-                                                  epoch |-> dc_new_epoch' - 1,
-                                                  target_uid |-> target_uid',
-                                                  sender |-> DesignatedCommitter
-                                          ])
-                           /\ pc' = [pc EXCEPT ![2] = "DcMain"]
-                           /\ UNCHANGED dc_uid_at_start_of_add
+          /\ IF ~TerminationCondition
+                THEN /\ DcHasPendings /\ DcIsAware
+                     /\ IF DcHasPendingAdds
+                           THEN /\ my_uid' = DesignatedCommitter
+                                /\ dc_uid_at_start_of_add' = DesignatedCommitter
+                                /\ cur_branch' = "Adding pendings: Welcome"
+                                /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_add"])
+                                /\ dc_new_pending_adds' = Tail(user_states[DesignatedCommitter]["users_pending_add"])
+                                /\ dc_new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
+                                /\ dc_new_idx' = user_states[DesignatedCommitter]["idx_in_messages"]
+                                /\ dc_new_welcomed' = user_states[DesignatedCommitter]["welcomed"]
+                                /\ dc_new_pending_removes' = user_states[DesignatedCommitter]["users_pending_remove"]
+                                /\ user_states' = [user_states EXCEPT ![DesignatedCommitter] =                                     [
+                                                                                                   welcomed |-> dc_new_welcomed',
+                                                                                                   epoch |-> dc_new_epoch',
+                                                                                                   idx_in_messages |-> dc_new_idx',
+                                                                                                   users_pending_add |-> dc_new_pending_adds',
+                                                                                                   users_pending_remove |-> dc_new_pending_removes'
+                                                                                               ]]
+                                /\ messages' =             Append(messages, [
+                                                       ty |-> "mls_welcome",
+                                                       target_uid |-> target_uid',
+                                                       epoch |-> dc_new_epoch',
+                                                       sender |-> DesignatedCommitter
+                                               ])
+                                /\ pc' = [pc EXCEPT ![2] = "DcSendAdd"]
+                           ELSE /\ cur_branch' = "Removing pendings"
+                                /\ my_uid' = DesignatedCommitter
+                                /\ target_uid' = Head(user_states[DesignatedCommitter]["users_pending_remove"])
+                                /\ dc_new_pending_removes' = Tail(user_states[DesignatedCommitter]["users_pending_remove"])
+                                /\ dc_new_epoch' = user_states[DesignatedCommitter]["epoch"] + 1
+                                /\ dc_new_idx' = user_states[DesignatedCommitter]["idx_in_messages"]
+                                /\ dc_new_welcomed' = user_states[DesignatedCommitter]["welcomed"]
+                                /\ dc_new_pending_adds' = user_states[DesignatedCommitter]["users_pending_add"]
+                                /\ user_states' = [user_states EXCEPT ![DesignatedCommitter] =                                     [
+                                                                                                   welcomed |-> dc_new_welcomed',
+                                                                                                   epoch |-> dc_new_epoch',
+                                                                                                   idx_in_messages |-> dc_new_idx',
+                                                                                                   users_pending_add |-> dc_new_pending_adds',
+                                                                                                   users_pending_remove |-> dc_new_pending_removes'
+                                                                                               ]]
+                                /\ messages' =             Append(messages, [
+                                                       ty |-> "mls_remove",
+                                                       epoch |-> dc_new_epoch' - 1,
+                                                       target_uid |-> target_uid',
+                                                       sender |-> DesignatedCommitter
+                                               ])
+                                /\ pc' = [pc EXCEPT ![2] = "DcMain"]
+                                /\ UNCHANGED dc_uid_at_start_of_add
                 ELSE /\ pc' = [pc EXCEPT ![2] = "Done"]
                      /\ UNCHANGED << messages, user_states, my_uid, cur_branch, 
                                      dc_new_idx, dc_new_welcomed, dc_new_epoch, 
@@ -747,5 +764,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Tue Dec 17 00:14:55 CET 2024 by mrosenberg
+\* Last modified Tue Dec 17 00:54:40 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

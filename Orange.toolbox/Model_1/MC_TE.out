@@ -2,7 +2,7 @@
 TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 86 and seed 1492016156013988855 with 16 workers on 8 cores with 3643MB heap and 8191MB offheap memory [pid: 80796] (Mac OS X 10.16 x86_64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 85 and seed 1029282975823175890 with 16 workers on 8 cores with 3643MB heap and 8191MB offheap memory [pid: 82391] (Mac OS X 10.16 x86_64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
@@ -25,16 +25,22 @@ Semantic processing of module MC
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2024-12-17 00:14:59)
+Starting... (2024-12-17 00:54:44)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2189:0 @!@!@
 Computing initial states...
 @!@!@ENDMSG 2189 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 1 distinct state generated at 2024-12-17 00:15:00.
+Finished computing initial states: 1 distinct state generated at 2024-12-17 00:54:45.
 @!@!@ENDMSG 2190 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(15) at 2024-12-17 00:15:03: 114,207 states generated (114,207 s/min), 52,548 distinct states found (52,548 ds/min), 25,428 states left on queue.
+Progress(16) at 2024-12-17 00:54:48: 128,227 states generated (128,227 s/min), 51,216 distinct states found (51,216 ds/min), 24,890 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(26) at 2024-12-17 00:55:48: 6,913,459 states generated (6,785,232 s/min), 2,468,412 distinct states found (2,417,196 ds/min), 553,508 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(28) at 2024-12-17 00:56:48: 12,879,280 states generated (5,965,821 s/min), 4,527,249 distinct states found (2,058,837 ds/min), 931,485 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2114:1 @!@!@
 Deadlock reached.
@@ -68,7 +74,7 @@ The behavior up to this point is:
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-2: <CreateJoinLeave line 543, col 20 to line 568, col 72 of module orange_draft1>
+2: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
 /\ ignore_msg = FALSE
 /\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 0, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = 0
@@ -93,129 +99,18 @@ The behavior up to this point is:
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-3: <CreateJoinLeave line 543, col 20 to line 568, col 72 of module orange_draft1>
+3: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 0, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = 0
-/\ cur_branch = ""
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2]>>
-/\ dc_new_pending_adds = 0
-/\ dc_new_epoch = 0
-/\ new_welcomed = 0
-/\ new_idx = 0
-/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
-/\ target_uid = 0
-/\ new_msg = 0
-/\ new_pending_adds = 0
-/\ dc_new_idx = 0
-/\ dc_new_pending_removes = 0
-/\ new_pending_removes = 0
-/\ dc_uid_at_start_of_add = 0
-/\ my_uid = 0
-/\ next_free_uid = 3
-/\ new_epoch = 0
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-4: <CreateJoinLeave line 543, col 20 to line 568, col 72 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 0, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = 0
-/\ cur_branch = ""
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = << [ty |-> "user_joined", uid |-> 2],
-   [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3] >>
-/\ dc_new_pending_adds = 0
-/\ dc_new_epoch = 0
-/\ new_welcomed = 0
-/\ new_idx = 0
-/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
-/\ target_uid = 0
-/\ new_msg = 0
-/\ new_pending_adds = 0
-/\ dc_new_idx = 0
-/\ dc_new_pending_removes = 0
-/\ new_pending_removes = 0
-/\ dc_uid_at_start_of_add = 0
-/\ my_uid = 0
-/\ next_free_uid = 4
-/\ new_epoch = 0
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-5: <CreateJoinLeave line 543, col 20 to line 568, col 72 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 0, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = 0
-/\ cur_branch = ""
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = << [ty |-> "user_joined", uid |-> 2],
-   [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
-/\ dc_new_pending_adds = 0
-/\ dc_new_epoch = 0
-/\ new_welcomed = 0
-/\ new_idx = 0
-/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
-/\ target_uid = 0
-/\ new_msg = 0
-/\ new_pending_adds = 0
-/\ dc_new_idx = 0
-/\ dc_new_pending_removes = 0
-/\ new_pending_removes = 0
-/\ dc_uid_at_start_of_add = 0
-/\ my_uid = 0
-/\ next_free_uid = 5
-/\ new_epoch = 0
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-6: <CreateJoinLeave line 543, col 20 to line 568, col 72 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 0, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = 0
-/\ cur_branch = ""
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = << [ty |-> "user_joined", uid |-> 2],
-   [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
-/\ dc_new_pending_adds = 0
-/\ dc_new_epoch = 0
-/\ new_welcomed = 0
-/\ new_idx = 0
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
-/\ target_uid = 0
-/\ new_msg = 0
-/\ new_pending_adds = 0
-/\ dc_new_idx = 0
-/\ dc_new_pending_removes = 0
-/\ new_pending_removes = 0
-/\ dc_uid_at_start_of_add = 0
-/\ my_uid = 0
-/\ next_free_uid = 5
-/\ new_epoch = 0
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-7: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 1, users_pending_add |-> <<2>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 1, users_pending_add |-> <<2>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = 0
 /\ cur_branch = "Reading unreads"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = << [ty |-> "user_joined", uid |-> 2],
-   [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2]>>
 /\ dc_new_pending_adds = 0
 /\ dc_new_epoch = 0
 /\ new_welcomed = TRUE
 /\ new_idx = 1
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
 /\ target_uid = 0
 /\ new_msg = [ty |-> "user_joined", uid |-> 2]
 /\ new_pending_adds = <<2>>
@@ -224,26 +119,77 @@ The behavior up to this point is:
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 0
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 3
 /\ new_epoch = 0
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-8: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
+4: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 2, users_pending_add |-> <<2>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 1, users_pending_add |-> <<2>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = 0
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2]>>
+/\ dc_new_pending_adds = 0
+/\ dc_new_epoch = 0
+/\ new_welcomed = TRUE
+/\ new_idx = 1
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 0
+/\ new_msg = [ty |-> "user_joined", uid |-> 2]
+/\ new_pending_adds = <<2>>
+/\ dc_new_idx = 0
+/\ dc_new_pending_removes = 0
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 0
+/\ my_uid = 1
+/\ next_free_uid = 3
+/\ new_epoch = 0
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+5: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 1, users_pending_add |-> <<2>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = 0
 /\ cur_branch = "Reading unreads"
 /\ nonwelcomed_to_welcomed = FALSE
 /\ messages = << [ty |-> "user_joined", uid |-> 2],
    [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
+   [ty |-> "user_joined", uid |-> 3] >>
+/\ dc_new_pending_adds = 0
+/\ dc_new_epoch = 0
+/\ new_welcomed = TRUE
+/\ new_idx = 1
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 0
+/\ new_msg = [ty |-> "user_joined", uid |-> 2]
+/\ new_pending_adds = <<2>>
+/\ dc_new_idx = 0
+/\ dc_new_pending_removes = 0
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 0
+/\ my_uid = 1
+/\ next_free_uid = 4
+/\ new_epoch = 0
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+6: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 2, users_pending_add |-> <<2>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = 0
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = << [ty |-> "user_joined", uid |-> 2],
+   [ty |-> "user_left", uid |-> 2],
+   [ty |-> "user_joined", uid |-> 3] >>
 /\ dc_new_pending_adds = 0
 /\ dc_new_epoch = 0
 /\ new_welcomed = TRUE
 /\ new_idx = 2
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
 /\ target_uid = 0
 /\ new_msg = [ty |-> "user_left", uid |-> 2]
 /\ new_pending_adds = <<2>>
@@ -252,26 +198,25 @@ The behavior up to this point is:
 /\ new_pending_removes = <<2>>
 /\ dc_uid_at_start_of_add = 0
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = 0
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-9: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
+7: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<2, 3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<2, 3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = 0
 /\ cur_branch = "Reading unreads"
 /\ nonwelcomed_to_welcomed = FALSE
 /\ messages = << [ty |-> "user_joined", uid |-> 2],
    [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
+   [ty |-> "user_joined", uid |-> 3] >>
 /\ dc_new_pending_adds = 0
 /\ dc_new_epoch = 0
 /\ new_welcomed = TRUE
 /\ new_idx = 3
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
 /\ target_uid = 0
 /\ new_msg = [ty |-> "user_joined", uid |-> 3]
 /\ new_pending_adds = <<2, 3>>
@@ -280,350 +225,497 @@ The behavior up to this point is:
 /\ new_pending_removes = <<2>>
 /\ dc_uid_at_start_of_add = 0
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = 0
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-10: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
+8: <DcMain line 669, col 11 to line 727, col 64 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 0, welcomed |-> TRUE, idx_in_messages |-> 4, users_pending_add |-> <<2, 3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = 0
-/\ cur_branch = "Reading unreads"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = << [ty |-> "user_joined", uid |-> 2],
-   [ty |-> "user_left", uid |-> 2],
-   [ty |-> "user_joined", uid |-> 3],
-   [ty |-> "user_joined", uid |-> 4] >>
-/\ dc_new_pending_adds = 0
-/\ dc_new_epoch = 0
-/\ new_welcomed = TRUE
-/\ new_idx = 4
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
-/\ target_uid = 0
-/\ new_msg = [ty |-> "user_joined", uid |-> 4]
-/\ new_pending_adds = <<2, 3, 4>>
-/\ dc_new_idx = 0
-/\ dc_new_pending_removes = 0
-/\ new_pending_removes = <<2>>
-/\ dc_uid_at_start_of_add = 0
-/\ my_uid = 1
-/\ next_free_uid = 5
-/\ new_epoch = 0
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-11: <DcMain line 652, col 11 to line 710, col 64 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 4, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Adding pendings: Welcome"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
+/\ dc_new_pending_adds = <<3>>
 /\ dc_new_epoch = 1
 /\ new_welcomed = TRUE
-/\ new_idx = 4
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ new_idx = 3
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
 /\ target_uid = 2
-/\ new_msg = [ty |-> "user_joined", uid |-> 4]
-/\ new_pending_adds = <<2, 3, 4>>
-/\ dc_new_idx = 4
+/\ new_msg = [ty |-> "user_joined", uid |-> 3]
+/\ new_pending_adds = <<2, 3>>
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<2>>
 /\ dc_uid_at_start_of_add = 1
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = 0
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-12: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
+9: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Reading unreads"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
-/\ dc_new_epoch = 1
-/\ new_welcomed = TRUE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
-/\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<3, 4>>
-/\ dc_new_idx = 4
-/\ dc_new_pending_removes = <<2>>
-/\ new_pending_removes = <<2>>
-/\ dc_uid_at_start_of_add = 1
-/\ my_uid = 1
-/\ next_free_uid = 5
-/\ new_epoch = 1
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-13: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = TRUE
-/\ cur_branch = "Reading unreads"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
+/\ dc_new_pending_adds = <<3>>
 /\ dc_new_epoch = 1
 /\ new_welcomed = FALSE
 /\ new_idx = 4
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
 /\ target_uid = 2
-/\ new_msg = [ty |-> "user_joined", uid |-> 4]
-/\ new_pending_adds = <<4>>
-/\ dc_new_idx = 4
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
 /\ my_uid = 3
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = -1
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-14: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
+10: <DcSendAdd line 729, col 14 to line 748, col 42 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 4, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Adding pendings: Add"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]>>
+/\ dc_new_pending_adds = <<3>>
+/\ dc_new_epoch = 1
+/\ new_welcomed = FALSE
+/\ new_idx = 4
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 2
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 3
+/\ dc_new_pending_removes = <<2>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 1
+/\ next_free_uid = 4
+/\ new_epoch = -1
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+11: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = TRUE
+/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<3>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Reading unreads"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]>>
+/\ dc_new_pending_adds = <<3>>
 /\ dc_new_epoch = 1
 /\ new_welcomed = FALSE
 /\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
 /\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<4>>
-/\ dc_new_idx = 4
+/\ new_msg = [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
 /\ my_uid = 3
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = -1
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-15: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = TRUE
-/\ cur_branch = "Reading unreads"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
-/\ dc_new_epoch = 1
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
-/\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<>>
-/\ dc_new_idx = 4
-/\ dc_new_pending_removes = <<2>>
-/\ new_pending_removes = <<>>
-/\ dc_uid_at_start_of_add = 1
-/\ my_uid = 4
-/\ next_free_uid = 5
-/\ new_epoch = -1
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-16: <UserMain line 572, col 13 to line 648, col 41 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = TRUE
-/\ cur_branch = "Reading unreads"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
-/\ dc_new_epoch = 1
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcSendAdd")
-/\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<>>
-/\ dc_new_idx = 4
-/\ dc_new_pending_removes = <<2>>
-/\ new_pending_removes = <<>>
-/\ dc_uid_at_start_of_add = 1
-/\ my_uid = 4
-/\ next_free_uid = 5
-/\ new_epoch = -1
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-17: <DcSendAdd line 712, col 14 to line 731, col 42 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 1, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<3, 4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = TRUE
-/\ cur_branch = "Adding pendings: Add"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]>>
-/\ dc_new_pending_adds = <<3, 4>>
-/\ dc_new_epoch = 1
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcMain")
-/\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<>>
-/\ dc_new_idx = 4
-/\ dc_new_pending_removes = <<2>>
-/\ new_pending_removes = <<>>
-/\ dc_uid_at_start_of_add = 1
-/\ my_uid = 1
-/\ next_free_uid = 5
-/\ new_epoch = -1
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-18: <DcMain line 652, col 11 to line 710, col 64 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+12: <DcMain line 669, col 11 to line 727, col 64 of module orange_draft1>
+/\ ignore_msg = TRUE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Adding pendings: Welcome"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1]>>
-/\ dc_new_pending_adds = <<4>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1]>>
+/\ dc_new_pending_adds = <<>>
 /\ dc_new_epoch = 2
 /\ new_welcomed = FALSE
 /\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcSendAdd")
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
 /\ target_uid = 3
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ new_msg = [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]
 /\ new_pending_adds = <<>>
-/\ dc_new_idx = 5
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = -1
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-19: <DcSendAdd line 712, col 14 to line 731, col 42 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
-/\ dc_new_welcomed = TRUE
-/\ cur_branch = "Adding pendings: Add"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "mls_add", epoch |-> 1, target_uid |-> 3, sender |-> 1]>>
-/\ dc_new_pending_adds = <<4>>
-/\ dc_new_epoch = 2
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcMain")
-/\ target_uid = 3
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
-/\ new_pending_adds = <<>>
-/\ dc_new_idx = 5
-/\ dc_new_pending_removes = <<2>>
-/\ new_pending_removes = <<>>
-/\ dc_uid_at_start_of_add = 1
-/\ my_uid = 1
-/\ next_free_uid = 5
-/\ new_epoch = -1
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-20: <DcMain line 652, col 11 to line 710, col 64 of module orange_draft1>
-/\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+13: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
+/\ ignore_msg = TRUE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Adding pendings: Welcome"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "mls_add", epoch |-> 1, target_uid |-> 3, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 3, target_uid |-> 4, sender |-> 1]>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1]>>
 /\ dc_new_pending_adds = <<>>
-/\ dc_new_epoch = 3
+/\ dc_new_epoch = 2
 /\ new_welcomed = FALSE
 /\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcSendAdd")
-/\ target_uid = 4
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 3
+/\ new_msg = [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1]
 /\ new_pending_adds = <<>>
-/\ dc_new_idx = 5
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
 /\ my_uid = 1
-/\ next_free_uid = 5
+/\ next_free_uid = 4
 /\ new_epoch = -1
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-21: <DcSendAdd line 712, col 14 to line 731, col 42 of module orange_draft1>
+14: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 6, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
-/\ cur_branch = "Adding pendings: Add"
-/\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "mls_add", epoch |-> 1, target_uid |-> 3, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 3, target_uid |-> 4, sender |-> 1], [ty |-> "mls_add", epoch |-> 2, target_uid |-> 4, sender |-> 1]>>
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = TRUE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1]>>
 /\ dc_new_pending_adds = <<>>
-/\ dc_new_epoch = 3
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcMain")
-/\ target_uid = 4
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ dc_new_epoch = 2
+/\ new_welcomed = TRUE
+/\ new_idx = 6
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 3
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1]
 /\ new_pending_adds = <<>>
-/\ dc_new_idx = 5
+/\ dc_new_idx = 3
 /\ dc_new_pending_removes = <<2>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
-/\ my_uid = 1
-/\ next_free_uid = 5
-/\ new_epoch = -1
+/\ my_uid = 3
+/\ next_free_uid = 4
+/\ new_epoch = 2
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2217:4 @!@!@
-22: <DcMain line 652, col 11 to line 710, col 64 of module orange_draft1>
+15: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
 /\ ignore_msg = FALSE
-/\ user_states = <<[epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 5, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 7, users_pending_add |-> <<>>, users_pending_remove |-> <<1>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 2
+/\ new_welcomed = TRUE
+/\ new_idx = 7
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 3
+/\ new_msg = [ty |-> "user_left", uid |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 3
+/\ dc_new_pending_removes = <<2>>
+/\ new_pending_removes = <<1>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 3
+/\ next_free_uid = 4
+/\ new_epoch = 2
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+16: <DcSendAdd line 729, col 14 to line 748, col 42 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 7, users_pending_add |-> <<>>, users_pending_remove |-> <<1>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 2
+/\ new_welcomed = TRUE
+/\ new_idx = 7
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 3
+/\ new_msg = [ty |-> "user_left", uid |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 3
+/\ dc_new_pending_removes = <<2>>
+/\ new_pending_removes = <<1>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 3
+/\ next_free_uid = 4
+/\ new_epoch = 2
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+17: <DcMain line 669, col 11 to line 727, col 64 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 7, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
 /\ dc_new_welcomed = TRUE
 /\ cur_branch = "Removing pendings"
 /\ nonwelcomed_to_welcomed = FALSE
-/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "mls_add", epoch |-> 1, target_uid |-> 3, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 3, target_uid |-> 4, sender |-> 1], [ty |-> "mls_add", epoch |-> 2, target_uid |-> 4, sender |-> 1], [ty |-> "mls_remove", epoch |-> 3, target_uid |-> 2, sender |-> 1]>>
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3]>>
 /\ dc_new_pending_adds = <<>>
-/\ dc_new_epoch = 4
-/\ new_welcomed = FALSE
-/\ new_idx = 5
-/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcMain")
-/\ target_uid = 2
-/\ new_msg = [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1]
+/\ dc_new_epoch = 3
+/\ new_welcomed = TRUE
+/\ new_idx = 7
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 1
+/\ new_msg = [ty |-> "user_left", uid |-> 1]
 /\ new_pending_adds = <<>>
-/\ dc_new_idx = 5
+/\ dc_new_idx = 7
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<1>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 3
+/\ next_free_uid = 4
+/\ new_epoch = 2
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+18: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 7, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Removing pendings"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 3
+/\ new_welcomed = TRUE
+/\ new_idx = 7
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 1
+/\ new_msg = [ty |-> "user_left", uid |-> 1]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 7
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<1>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 2
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+19: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = TRUE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 8, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 3
+/\ new_welcomed = TRUE
+/\ new_idx = 8
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 1
+/\ new_msg = [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 7
 /\ dc_new_pending_removes = <<>>
 /\ new_pending_removes = <<>>
 /\ dc_uid_at_start_of_add = 1
-/\ my_uid = 1
+/\ my_uid = 3
 /\ next_free_uid = 5
-/\ new_epoch = -1
+/\ new_epoch = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+20: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 3, welcomed |-> TRUE, idx_in_messages |-> 9, users_pending_add |-> <<4>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 3
+/\ new_welcomed = TRUE
+/\ new_idx = 9
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcMain")
+/\ target_uid = 1
+/\ new_msg = [ty |-> "user_joined", uid |-> 4]
+/\ new_pending_adds = <<4>>
+/\ dc_new_idx = 7
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 1
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+21: <DcMain line 669, col 11 to line 727, col 64 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Adding pendings: Welcome"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 9
+/\ pc = (0 :> "CreateJoinLeave" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "user_joined", uid |-> 4]
+/\ new_pending_adds = <<4>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+22: <CreateJoinLeave line 560, col 20 to line 585, col 72 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Adding pendings: Welcome"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 9
+/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "user_joined", uid |-> 4]
+/\ new_pending_adds = <<4>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+23: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 9, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = TRUE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 10
+/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 4
+/\ next_free_uid = 5
+/\ new_epoch = 4
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+24: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 10
+/\ pc = (0 :> "Done" @@ 1 :> "UserMain" @@ 2 :> "DcSendAdd")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 4
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+25: <UserMain line 589, col 13 to line 665, col 41 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Reading unreads"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 10
+/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcSendAdd")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 4
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+26: <DcSendAdd line 729, col 14 to line 748, col 42 of module orange_draft1>
+/\ ignore_msg = FALSE
+/\ user_states = <<[epoch |-> 2, welcomed |-> TRUE, idx_in_messages |-> 3, users_pending_add |-> <<>>, users_pending_remove |-> <<2>>], [epoch |-> -1, welcomed |-> FALSE, idx_in_messages |-> 1, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>], [epoch |-> 4, welcomed |-> TRUE, idx_in_messages |-> 10, users_pending_add |-> <<>>, users_pending_remove |-> <<>>]>>
+/\ dc_new_welcomed = TRUE
+/\ cur_branch = "Adding pendings: Add"
+/\ nonwelcomed_to_welcomed = FALSE
+/\ messages = <<[ty |-> "user_joined", uid |-> 2], [ty |-> "user_left", uid |-> 2], [ty |-> "user_joined", uid |-> 3], [ty |-> "mls_welcome", epoch |-> 1, target_uid |-> 2, sender |-> 1], [ty |-> "mls_add", epoch |-> 0, target_uid |-> 2, sender |-> 1], [ty |-> "mls_welcome", epoch |-> 2, target_uid |-> 3, sender |-> 1], [ty |-> "user_left", uid |-> 1], [ty |-> "mls_remove", epoch |-> 2, target_uid |-> 1, sender |-> 3], [ty |-> "user_joined", uid |-> 4], [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3], [ty |-> "mls_add", epoch |-> 3, target_uid |-> 4, sender |-> 3]>>
+/\ dc_new_pending_adds = <<>>
+/\ dc_new_epoch = 4
+/\ new_welcomed = TRUE
+/\ new_idx = 10
+/\ pc = (0 :> "Done" @@ 1 :> "Done" @@ 2 :> "DcMain")
+/\ target_uid = 4
+/\ new_msg = [ty |-> "mls_welcome", epoch |-> 4, target_uid |-> 4, sender |-> 3]
+/\ new_pending_adds = <<>>
+/\ dc_new_idx = 9
+/\ dc_new_pending_removes = <<>>
+/\ new_pending_removes = <<>>
+/\ dc_uid_at_start_of_add = 3
+/\ my_uid = 3
+/\ next_free_uid = 5
+/\ new_epoch = 4
 
 @!@!@ENDMSG 2217 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(23) at 2024-12-17 00:15:35: 4,216,646 states generated (6,856,149 s/min), 1,723,392 distinct states found (2,802,187 ds/min), 540,683 states left on queue.
+Progress(29) at 2024-12-17 00:57:12: 15,231,061 states generated (6,108,755 s/min), 5,362,833 distinct states found (2,150,883 ds/min), 1,087,678 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
-4216646 states generated, 1723392 distinct states found, 540683 states left on queue.
+15231061 states generated, 5362833 distinct states found, 1087678 states left on queue.
 @!@!@ENDMSG 2199 @!@!@
 @!@!@STARTMSG 2194:0 @!@!@
-The depth of the complete state graph search is 23.
+The depth of the complete state graph search is 29.
 @!@!@ENDMSG 2194 @!@!@
 @!@!@STARTMSG 2268:0 @!@!@
 The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 8 and the 95th percentile is 4).
 @!@!@ENDMSG 2268 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 36927ms at (2024-12-17 00:15:35)
+Finished in 154163ms at (2024-12-17 00:57:17)
 @!@!@ENDMSG 2186 @!@!@

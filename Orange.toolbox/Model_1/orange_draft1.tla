@@ -1,7 +1,10 @@
 --------------------------- MODULE orange_draft1 ---------------------------
 
 EXTENDS Integers, Sequences, TLC, FiniteSets
-CONSTANT MaxTotalUsers, NULL
+CONSTANT
+    MaxTotalUsers,
+    DEFAULT_EPOCH, \* The default (invalid) value a new user's epoch is set to. This is -1
+    MIN_FAILURE \* The value of Min({}). This is 99999999
 
 JoinLeaveTags == { "user_left", "user_joined" }
 JoinLeaveType == [ ty: JoinLeaveTags, uid: Nat ]
@@ -10,7 +13,7 @@ MlsAddRemoveType == [ ty: MlsAddRemoveTags, epoch: Nat, target_uid: Nat, sender:
 MlsWelcomeType == [ty: {"mls_welcome"}, target_uid: Nat, epoch: Nat, sender: Nat ]
 UserStateType == [
     welcomed: BOOLEAN, \* Whether this user has gotten a Welcome yet
-    epoch: Nat \union {NULL},
+    epoch: Nat \union {DEFAULT_EPOCH},
     idx_in_messages: Nat,
     users_pending_add: SUBSET Nat,
     users_pending_remove: SUBSET Nat
@@ -40,7 +43,7 @@ define
         \A y \in S :
             x >= y
     
-    Min(S) == IF S = {} THEN Assert(FALSE, "min of empty set") ELSE CHOOSE x \in S :
+    Min(S) == IF S = {} THEN MIN_FAILURE ELSE CHOOSE x \in S :
         \A y \in S :
             x <= y
 
@@ -86,6 +89,13 @@ define
     
     GroupIsNonempty == ~GroupIsEmpty
     
+    AddedUids == {
+        uid \in 1..Len(user_states) :
+            \E j \in 1..Len(messages) :
+                /\ messages[j]["ty"] = "mls_add"
+                /\ messages[j]["target_uid"] = uid
+    } \union {1} \* User 1 is effectively Added, but there's no message for it
+    
     LargestUserEpoch == Max({user_states[i]["epoch"] : i \in 1..Len(user_states)})
 
     \* Given a sequence seq and an element x, returns a copy of seq without the items equal to x
@@ -101,7 +111,11 @@ define
     \* Both are alive by definition. So j somehow thinks userLeft[uid=i] occurred. Contradiction. So no two parties think they are DC
     \* That said, it is possible for non-DC parties to have conflicting views on who the current DC is. But that doesn't matter.
 
-    DesignatedCommitter == Min(AliveUids)
+    \* The designated committer is the smallest UID that's alive and has been Added
+    DesignatedCommitter == Min(AliveUids \intersect AddedUids)
+    
+    \* The DC isn't always defined. This means the group is dead.
+    DcIsDefined == DesignatedCommitter # MIN_FAILURE
     
     \* The DC doesn't always know that they're the DC. They know iff they've processed all the userLefts for the UIDs before them
     DcIsAware == IF AliveUids = {} THEN FALSE ELSE
@@ -123,30 +137,56 @@ define
         
     DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
     
+    \* Invariant: a user should never get two Adds or two Removes
+    UniqueTargetUidInvariant == \A i \in 1..Len(messages) :
+        messages[i]["ty"] \in MlsAddRemoveTags =>
+            \A j \in 1..Len(messages):
+                (j # i /\ messages[i]["ty"] = messages[j]["ty"]) =>
+                    messages[i]["target_uid"] # messages[j]["target_uid"]
+
+    \* The epoch among Add/Remove should be monotonically increasing by 1
+    MonotonicEpochInvariant ==
+    LET
+        all_add_removes == { i \in 1..Len(messages) : messages[i]["ty"] \in MlsAddRemoveTags }
+        all_epochs == { messages[i]["epoch"] : i \in all_add_removes }
+    IN
+        \* Handle the trivial case
+        IF all_add_removes = {} THEN TRUE ELSE
+        \* Check monotonicity
+        /\ \A i,j \in all_add_removes:
+            i < j => messages[i]["epoch"] < messages[j]["epoch"]
+        \* Check that the max epoch is the number of add/removes
+        \* This and the above show that epoch is monotonically increasing by 1
+        /\ Cardinality(all_add_removes) = Max(all_epochs) + 1
+    
     \* Our simulation is done once all users have been added, every (alive) user is up to date, and
-    \* the DC has no more messages to send
+    \* the DC has no more messages to send. Either that, or the group is dead (ie the DC is undefined)
     \* TODO: Check if we need to check that DC is aware in this condition. I think not because it's
     \*       implied by UsersWithUnreads={}
     TerminationCondition ==
-        /\ next_free_uid = MaxTotalUsers
-        /\ UsersWithUnreads = {}
-        /\ ~DcHasPendings
-        /\ ~dc_is_currently_adding
+        \/ ~DcIsDefined
+        \/ /\ next_free_uid = MaxTotalUsers
+           /\ UsersWithUnreads = {}
+           /\ ~DcHasPendings
+           /\ ~dc_is_currently_adding
         
     \* The complex way of creating UIDs should be the same as the easy way
     UidEnumInvariant == AllUids = 1..Len(user_states)
     
     \* If the leftmost alvie UID is not welcomed, then the group is stuck. We make sure this is
-    \* impossible in our setup
+    \* impossible in our setup.
+    \* UPDATE: NOT ANYMORE
     DcInvariant == Min(AliveUids) = Min(AliveWelcomedUids)
 
 end define;
+
 
 \* Invariant: a joined user must always receive a welcome.
 \*     more specifically: no add/remove messages can happen until a Welcome happens
 \* Invariant: the DC is always welcomed
 
 \* Invariant: Every welcomed user is eventually added
+    \* specifically. every user has at most 1 welcome, and it is followed by an Add at some point
 
 \* Invariant: users who have been added do not appear on the users_pending_add lists of up-to-date users
 
@@ -164,7 +204,7 @@ begin
     messages := Append(messages, [ty |-> "user_joined", uid |-> next_free_uid]);
     user_states := Append(user_states, [
         welcomed |-> FALSE,
-        epoch |-> NULL,
+        epoch |-> DEFAULT_EPOCH,
         idx_in_messages |-> Len(messages),
         users_pending_add |-> <<>>,
         users_pending_remove |-> <<>>
@@ -187,12 +227,8 @@ begin
             either
                 append_user_joined_event();
             or
-                \* TODO: Remove this condition. Allow the model to terminate if every user leaves
-                \* To avoid deadlock, we only make a user leave if the group would not become empty
-                with i \in AliveWelcomedUids do
-                    with j \in (AliveUids \ {i}) do
-                        append_user_left_event(j);
-                    end with;
+                with i \in AliveUids do
+                    append_user_left_event(i);
                 end with;
             end either;
         end while;
@@ -239,7 +275,7 @@ begin
                         \/ /\ uid = DesignatedCommitter
                            \* Note: a DC's own Add/Remove could be far behind the DC's current epoch. This
                            \* happens if the DC sent many Adds/Removes before receiving any
-                           /\ new_msg["epoch"] # user_states[uid]["epoch"]
+                           /\ new_msg["epoch"] < user_states[uid]["epoch"]
                         \* Finally, ignore if not welcomed and just observing an Add/Remove for someone
                         \/    user_states[uid]["welcomed"] = FALSE
                         
@@ -419,7 +455,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "90e752e6" /\ chksum(tla) = "25f5375b")
+\* BEGIN TRANSLATION (chksum(pcal) = "660f42dc" /\ chksum(tla) = "6444d32a")
 VARIABLES messages, user_states, next_free_uid, dc_is_currently_adding, 
           my_uid, cur_branch, pc
 
@@ -428,7 +464,7 @@ Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
     \A y \in S :
         x >= y
 
-Min(S) == IF S = {} THEN Assert(FALSE, "min of empty set") ELSE CHOOSE x \in S :
+Min(S) == IF S = {} THEN MIN_FAILURE ELSE CHOOSE x \in S :
     \A y \in S :
         x <= y
 
@@ -474,6 +510,13 @@ GroupIsEmpty == AllUids = DeadUids
 
 GroupIsNonempty == ~GroupIsEmpty
 
+AddedUids == {
+    uid \in 1..Len(user_states) :
+        \E j \in 1..Len(messages) :
+            /\ messages[j]["ty"] = "mls_add"
+            /\ messages[j]["target_uid"] = uid
+} \union {1}
+
 LargestUserEpoch == Max({user_states[i]["epoch"] : i \in 1..Len(user_states)})
 
 
@@ -489,7 +532,11 @@ NonwelcomedUsersWithUnreads == { i \in AliveNonwelcomedUids : user_states[i]["id
 
 
 
-DesignatedCommitter == Min(AliveUids)
+
+DesignatedCommitter == Min(AliveUids \intersect AddedUids)
+
+
+DcIsDefined == DesignatedCommitter # MIN_FAILURE
 
 
 DcIsAware == IF AliveUids = {} THEN FALSE ELSE
@@ -512,17 +559,41 @@ DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
 DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
 
 
+UniqueTargetUidInvariant == \A i \in 1..Len(messages) :
+    messages[i]["ty"] \in MlsAddRemoveTags =>
+        \A j \in 1..Len(messages):
+            (j # i /\ messages[i]["ty"] = messages[j]["ty"]) =>
+                messages[i]["target_uid"] # messages[j]["target_uid"]
+
+
+MonotonicEpochInvariant ==
+LET
+    all_add_removes == { i \in 1..Len(messages) : messages[i]["ty"] \in MlsAddRemoveTags }
+    all_epochs == { messages[i]["epoch"] : i \in all_add_removes }
+IN
+
+    IF all_add_removes = {} THEN TRUE ELSE
+
+    /\ \A i,j \in all_add_removes:
+        i < j => messages[i]["epoch"] < messages[j]["epoch"]
+
+
+    /\ Cardinality(all_add_removes) = Max(all_epochs) + 1
+
+
 
 
 
 TerminationCondition ==
-    /\ next_free_uid = MaxTotalUsers
-    /\ UsersWithUnreads = {}
-    /\ ~DcHasPendings
-    /\ ~dc_is_currently_adding
+    \/ ~DcIsDefined
+    \/ /\ next_free_uid = MaxTotalUsers
+       /\ UsersWithUnreads = {}
+       /\ ~DcHasPendings
+       /\ ~dc_is_currently_adding
 
 
 UidEnumInvariant == AllUids = 1..Len(user_states)
+
 
 
 
@@ -581,15 +652,14 @@ CreateJoinLeave == /\ pc[0] = "CreateJoinLeave"
                          THEN /\ \/ /\ messages' = Append(messages, [ty |-> "user_joined", uid |-> next_free_uid])
                                     /\ user_states' =                Append(user_states, [
                                                           welcomed |-> FALSE,
-                                                          epoch |-> NULL,
+                                                          epoch |-> DEFAULT_EPOCH,
                                                           idx_in_messages |-> Len(messages'),
                                                           users_pending_add |-> <<>>,
                                                           users_pending_remove |-> <<>>
                                                       ])
                                     /\ next_free_uid' = next_free_uid + 1
-                                 \/ /\ \E i \in AliveWelcomedUids:
-                                         \E j \in (AliveUids \ {i}):
-                                           messages' = Append(messages, [ty |-> "user_left", uid |-> j])
+                                 \/ /\ \E i \in AliveUids:
+                                         messages' = Append(messages, [ty |-> "user_left", uid |-> i])
                                     /\ UNCHANGED <<user_states, next_free_uid>>
                               /\ pc' = [pc EXCEPT ![0] = "CreateJoinLeave"]
                          ELSE /\ pc' = [pc EXCEPT ![0] = "Done"]
@@ -622,12 +692,12 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/ /\ uid = DesignatedCommitter
                                              
                                              
-                                                /\ new_msg'["epoch"] # user_states[uid]["epoch"]
+                                                /\ new_msg'["epoch"] < user_states[uid]["epoch"]
                                              
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 249, column 25.")
+                                                            "Failure of assertion at line 285, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -787,5 +857,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Tue Dec 17 12:35:30 CET 2024 by mrosenberg
+\* Last modified Tue Dec 17 17:05:58 CET 2024 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

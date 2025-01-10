@@ -144,6 +144,13 @@ define
                 (j # i /\ messages[i]["ty"] = messages[j]["ty"]) =>
                     messages[i]["target_uid"] # messages[j]["target_uid"]
 
+    \* Invariant: pendings should never have 2 of the same item in there
+    UniquePendings == \A i \in 1..Len(user_states) :
+        /\ \A j,k \in 1..Len(user_states[i]["users_pending_add"]) :
+              j # k => user_states[i]["users_pending_add"][j] # user_states[i]["users_pending_add"][k]
+        /\ \A j,k \in 1..Len(user_states[i]["users_pending_remove"]) :
+              j # k => user_states[i]["users_pending_remove"][j] # user_states[i]["users_pending_remove"][k]
+
     \* The epoch among Add/Remove should be monotonically increasing by 1
     MonotonicEpochInvariant ==
     LET
@@ -172,27 +179,23 @@ define
         
     \* The complex way of creating UIDs should be the same as the easy way
     UidEnumInvariant == AllUids = 1..Len(user_states)
-    
-    \* If the leftmost alvie UID is not welcomed, then the group is stuck. We make sure this is
-    \* impossible in our setup.
-    \* UPDATE: NOT ANYMORE
-    DcInvariant == Min(AliveUids) = Min(AliveWelcomedUids)
 
 end define;
 
 
 \* Invariant: a joined user must always receive a welcome.
 \*     more specifically: no add/remove messages can happen until a Welcome happens
-\* Invariant: the DC is always welcomed
+\* Invariant: the DC is eventually welcomed
 
 \* Invariant: Every welcomed user is eventually added
     \* specifically. every user has at most 1 welcome, and it is followed by an Add at some point
 
 \* Invariant: users who have been added do not appear on the users_pending_add lists of up-to-date users
 
-\* Invariant: pendings should never have 2 of the same item in there
 
 \* Invariant: added/removed users should eventually make it off pending lists
+
+\* Invariant: at the end, nobody should have any pending adds/removes
 
 \* A DC should never receive an epoch ahead of its current epoch
 
@@ -223,6 +226,7 @@ process DeliveryService = 0
 begin
     CreateJoinLeave:
         \* Loop until all users have been added
+        \* TODO: users can leave even after the max number of users have joined
         while next_free_uid < MaxTotalUsers do
             either
                 append_user_joined_event();
@@ -455,7 +459,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "660f42dc" /\ chksum(tla) = "6444d32a")
+\* BEGIN TRANSLATION (chksum(pcal) = "b3a556e3" /\ chksum(tla) = "1f466cd2")
 VARIABLES messages, user_states, next_free_uid, dc_is_currently_adding, 
           my_uid, cur_branch, pc
 
@@ -566,6 +570,13 @@ UniqueTargetUidInvariant == \A i \in 1..Len(messages) :
                 messages[i]["target_uid"] # messages[j]["target_uid"]
 
 
+UniquePendings == \A i \in 1..Len(user_states) :
+    /\ \A j,k \in 1..Len(user_states[i]["users_pending_add"]) :
+          j # k => user_states[i]["users_pending_add"][j] # user_states[i]["users_pending_add"][k]
+    /\ \A j,k \in 1..Len(user_states[i]["users_pending_remove"]) :
+          j # k => user_states[i]["users_pending_remove"][j] # user_states[i]["users_pending_remove"][k]
+
+
 MonotonicEpochInvariant ==
 LET
     all_add_removes == { i \in 1..Len(messages) : messages[i]["ty"] \in MlsAddRemoveTags }
@@ -593,11 +604,6 @@ TerminationCondition ==
 
 
 UidEnumInvariant == AllUids = 1..Len(user_states)
-
-
-
-
-DcInvariant == Min(AliveUids) = Min(AliveWelcomedUids)
 
 VARIABLES new_msg, new_idx, new_welcomed, new_epoch, new_pending_adds, 
           new_pending_removes, nonwelcomed_to_welcomed, ignore_msg, 
@@ -697,7 +703,7 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 285, column 25.")
+                                                            "Failure of assertion at line 289, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -857,5 +863,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Tue Dec 17 17:05:58 CET 2024 by mrosenberg
+\* Last modified Fri Jan 10 14:54:58 EST 2025 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

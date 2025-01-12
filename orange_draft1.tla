@@ -103,6 +103,14 @@ define
     
     \* Set of alive users who are not fully caught up with messages
     UsersWithUnreads == { i \in AliveUids : user_states[i]["idx_in_messages"] < Len(messages) }
+    
+        
+    \* Set of alive users who have pending adds/removeds
+    UsersWithPendings == {
+        i \in AliveUids :
+            \/ user_states[i]["users_pending_add"] # <<>>
+            \/ user_states[i]["users_pending_remove"] # <<>>
+    }
 
     \* Set of alive, nonwelcomed users who are not fully caught up with messages
     NonwelcomedUsersWithUnreads == { i \in AliveNonwelcomedUids : user_states[i]["idx_in_messages"] < Len(messages) }
@@ -116,6 +124,7 @@ define
     
     \* The DC isn't always defined. This means the group is dead.
     DcIsDefined == DesignatedCommitter # MIN_FAILURE
+    GroupIsAlive == DcIsDefined
     
     \* The DC doesn't always know that they're the DC. They know iff they've processed all the userLefts for the UIDs before them
     DcIsAware == IF AliveUids = {} THEN FALSE ELSE
@@ -176,15 +185,52 @@ define
            /\ UsersWithUnreads = {}
            /\ ~DcHasPendings
            /\ ~dc_is_currently_adding
+           
         
     \* The complex way of creating UIDs should be the same as the easy way
     UidEnumInvariant == AllUids = 1..Len(user_states)
 
+    \* Invariant: at the end, if the group is not dead, nobody should have any pending adds/removes
+    EndWithNoPendings == (TerminationCondition /\ DcIsDefined) => UsersWithPendings = {}
+    
+    \* Invariant: at the end of the simulation, every alive user has the same epoch (or the group
+    \* is dead)
+    EndWithEqualEpochs ==
+    LET
+        first_user == Min(AliveUids)
+        final_epoch == user_states[first_user]["epoch"]
+    IN
+        \* Every alive user has the same epoch as the first alive user
+        (TerminationCondition /\ GroupIsAlive) =>
+            \A u \in AliveUids : user_states[u]["epoch"] = final_epoch
+    
+    \* Invariant: by the end of the simulation, every joined user received a welcome
+    \* (or the group died)
+    JoinImpliesWelcome == (TerminationCondition /\ GroupIsAlive) =>
+        \A i \in 1..Len(messages) :
+            \* Every join eventually yields a welcome
+            messages[i]["ty"] = "user_joined" =>
+                \E j \in 1..Len(messages) :
+                    /\ j > i
+                    /\ messages[j]["ty"] = "mls_welcome"
+                    /\ messages[j]["target_uid"] = messages[i]["uid"]
+                    
+    \* Invariant: by the end of the simulation, every welcomed user received an add
+    \* (or the group died)
+    WelcomeImpliesAdd == (TerminationCondition /\ GroupIsAlive) =>
+        \A i \in 1..Len(messages) :
+            \* Every join eventually yields a welcome
+            messages[i]["ty"] = "mls_welcome" =>
+                \E j \in 1..Len(messages) :
+                    /\ j > i
+                    /\ messages[j]["ty"] = "mls_add"
+                    /\ messages[j]["target_uid"] = messages[i]["target_uid"]
+
 end define;
+        
+\* Invariant: no add/remove messages can happen until a Welcome happens
+            
 
-
-\* Invariant: a joined user must always receive a welcome.
-\*     more specifically: no add/remove messages can happen until a Welcome happens
 \* Invariant: the DC is eventually welcomed
 
 \* Invariant: Every welcomed user is eventually added
@@ -194,8 +240,6 @@ end define;
 
 
 \* Invariant: added/removed users should eventually make it off pending lists
-
-\* Invariant: at the end, nobody should have any pending adds/removes
 
 \* A DC should never receive an epoch ahead of its current epoch
 
@@ -238,7 +282,8 @@ begin
         end while;
 end process;
 
-\* ODDITY: if a user joins then leaves, it still triggers an Add then Remove. Can we simplify this?
+\* TODO: an oddity of the current process is if a user joins then leaves, it still triggers an Add
+\* then Remove. Can we simplify this?
 
 process Users = 1
 variables
@@ -459,7 +504,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "b3a556e3" /\ chksum(tla) = "1f466cd2")
+\* BEGIN TRANSLATION (chksum(pcal) = "64aa1787" /\ chksum(tla) = "9d12e854")
 VARIABLES messages, user_states, next_free_uid, dc_is_currently_adding, 
           my_uid, cur_branch, pc
 
@@ -530,6 +575,14 @@ RemoveElement(seq, x) == SelectSeq(seq, LAMBDA y: x # y)
 UsersWithUnreads == { i \in AliveUids : user_states[i]["idx_in_messages"] < Len(messages) }
 
 
+
+UsersWithPendings == {
+    i \in AliveUids :
+        \/ user_states[i]["users_pending_add"] # <<>>
+        \/ user_states[i]["users_pending_remove"] # <<>>
+}
+
+
 NonwelcomedUsersWithUnreads == { i \in AliveNonwelcomedUids : user_states[i]["idx_in_messages"] < Len(messages) }
 
 
@@ -541,6 +594,7 @@ DesignatedCommitter == Min(AliveUids \intersect AddedUids)
 
 
 DcIsDefined == DesignatedCommitter # MIN_FAILURE
+GroupIsAlive == DcIsDefined
 
 
 DcIsAware == IF AliveUids = {} THEN FALSE ELSE
@@ -603,7 +657,44 @@ TerminationCondition ==
        /\ ~dc_is_currently_adding
 
 
+
 UidEnumInvariant == AllUids = 1..Len(user_states)
+
+
+EndWithNoPendings == (TerminationCondition /\ DcIsDefined) => UsersWithPendings = {}
+
+
+
+EndWithEqualEpochs ==
+LET
+    first_user == Min(AliveUids)
+    final_epoch == user_states[first_user]["epoch"]
+IN
+
+    (TerminationCondition /\ GroupIsAlive) =>
+        \A u \in AliveUids : user_states[u]["epoch"] = final_epoch
+
+
+
+JoinImpliesWelcome == (TerminationCondition /\ GroupIsAlive) =>
+    \A i \in 1..Len(messages) :
+
+        messages[i]["ty"] = "user_joined" =>
+            \E j \in 1..Len(messages) :
+                /\ j > i
+                /\ messages[j]["ty"] = "mls_welcome"
+                /\ messages[j]["target_uid"] = messages[i]["uid"]
+
+
+
+WelcomeImpliesAdd == (TerminationCondition /\ GroupIsAlive) =>
+    \A i \in 1..Len(messages) :
+
+        messages[i]["ty"] = "mls_welcome" =>
+            \E j \in 1..Len(messages) :
+                /\ j > i
+                /\ messages[j]["ty"] = "mls_add"
+                /\ messages[j]["target_uid"] = messages[i]["target_uid"]
 
 VARIABLES new_msg, new_idx, new_welcomed, new_epoch, new_pending_adds, 
           new_pending_removes, nonwelcomed_to_welcomed, ignore_msg, 
@@ -703,7 +794,7 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 289, column 25.")
+                                                            "Failure of assertion at line 334, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -863,5 +954,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Fri Jan 10 14:54:58 EST 2025 by mrosenberg
+\* Last modified Sat Jan 11 21:42:28 EST 2025 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

@@ -1,4 +1,4 @@
---------------------------- MODULE orange_draft1 ---------------------------
+--------------------------- MODULE OrangeE2ee ---------------------------
 
 EXTENDS Integers, Sequences, TLC, FiniteSets
 CONSTANT

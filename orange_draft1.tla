@@ -2,9 +2,12 @@
 
 EXTENDS Integers, Sequences, TLC, FiniteSets
 CONSTANT
-    MaxTotalUsers,
-    DEFAULT_EPOCH, \* The default (invalid) value a new user's epoch is set to. This is -1
-    MIN_FAILURE \* The value of Min({}). This is 99999999
+    MaxTotalUsers
+
+\* The default (invalid) value a new user's epoch is set to
+DEFAULT_EPOCH == -1
+\* The value of Min({})
+MIN_FAILURE == 99999999 
 
 JoinLeaveTags == { "user_left", "user_joined" }
 JoinLeaveType == [ ty: JoinLeaveTags, uid: Nat ]
@@ -504,7 +507,7 @@ begin
         end while;
 end process;
 end algorithm; *)
-\* BEGIN TRANSLATION (chksum(pcal) = "64aa1787" /\ chksum(tla) = "9d12e854")
+\* BEGIN TRANSLATION (chksum(pcal) = "64aa1787" /\ chksum(tla) = "51145472")
 VARIABLES messages, user_states, next_free_uid, dc_is_currently_adding, 
           my_uid, cur_branch, pc
 
@@ -794,7 +797,7 @@ UserMain == /\ pc[1] = "UserMain"
                                              \/    user_states[uid]["welcomed"] = FALSE
                                              THEN /\ ignore_msg' = TRUE
                                              ELSE /\ Assert(user_states[uid]["epoch"] = new_msg'["epoch"], 
-                                                            "Failure of assertion at line 334, column 25.")
+                                                            "Failure of assertion at line 337, column 25.")
                                                   /\ ignore_msg' = FALSE
                                   ELSE /\ ignore_msg' = FALSE
                                        /\ IF /\ new_msg'["ty"] = "mls_welcome"
@@ -954,5 +957,5 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Jan 11 21:42:28 EST 2025 by mrosenberg
+\* Last modified Thu Mar 20 22:52:41 EDT 2025 by mrosenberg
 \* Created Mon Dec 09 16:20:30 CET 2024 by mrosenberg

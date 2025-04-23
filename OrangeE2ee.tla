@@ -244,7 +244,7 @@ begin
     messages := Append(messages, [ty |-> "user_left", uid |-> uid]);
 end macro;
 
-\* We model the delivery service as simply adding users until we hit the max
+\* We model the delivery service as simply removing users and adding users (up to a max)
 process DeliveryService = 0
 begin
     CreateJoinLeave:

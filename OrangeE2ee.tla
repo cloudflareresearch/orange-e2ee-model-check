@@ -45,7 +45,7 @@ define
     Max(S) == IF S = {} THEN -1 ELSE CHOOSE x \in S :
         \A y \in S :
             x >= y
-    
+
     Min(S) == IF S = {} THEN MIN_FAILURE ELSE CHOOSE x \in S :
         \A y \in S :
             x <= y
@@ -56,11 +56,8 @@ define
             \/ messages[j] \in JoinLeaveType
             \/ messages[j] \in MlsAddRemoveType
             \/ messages[j] \in MlsWelcomeType
-    
-    AllAreJoins == \A j \in 1..Len(messages): messages[j]["ty"] = "user_joined"
-    
-    MaxInvariant == \A j \in 1..Len(messages): messages[j]["uid"] < 6
-    
+
+    \* The set of all UIDs that have joined the group
     AllUids ==  LET
         user_joined_idxs == { i \in 1..Len(messages) : messages[i]["ty"] = "user_joined" }
     IN
@@ -68,46 +65,41 @@ define
             \union {1} \* Need to add 1 because it comes by default, not via user_joined
 
     \* The set of UIDs which have been sent a welcome. They might not have received it yet.
-    \* TODO: Rename this to something like "users that are able or will be able to participate"
     AllWelcomedUids == { uid \in AllUids :
         \E i \in 1..Len(messages) :
             /\ messages[i]["ty"] = "mls_welcome"
             /\ messages[i]["target_uid"] = uid
     } \union {1} \* User 1 is effectively welcomed, but there's no message for it
 
+    \* The set of UIDs that have left the group
     DeadUids == { uid \in AllUids :
         \E i \in 1..Len(messages):
             /\ messages[i]["ty"] = "user_left"
             /\ messages[i]["uid"] = uid
     }
-    
-    
+
+
+    \* The set of UIDs which have joined and not yet left
     AliveUids == AllUids \ DeadUids
-    
+
+    \* The set of UIDs which have joined and have been welcomed (ie are ready to participate)
     AliveWelcomedUids == AliveUids \intersect AllWelcomedUids
-    
-    AliveNonwelcomedUids == AliveUids \ AllWelcomedUids
-    
-    GroupIsEmpty == AllUids = DeadUids
-    
-    GroupIsNonempty == ~GroupIsEmpty
-    
+
+    \* The set of UIDs that have ever been added to the group (plus the initial member)
     AddedUids == {
         uid \in 1..Len(user_states) :
             \E j \in 1..Len(messages) :
                 /\ messages[j]["ty"] = "mls_add"
                 /\ messages[j]["target_uid"] = uid
     } \union {1} \* User 1 is effectively Added, but there's no message for it
-    
-    LargestUserEpoch == Max({user_states[i]["epoch"] : i \in 1..Len(user_states)})
 
     \* Given a sequence seq and an element x, returns a copy of seq without the items equal to x
     RemoveElement(seq, x) == SelectSeq(seq, LAMBDA y: x # y)
-    
+
     \* Set of alive users who are not fully caught up with messages
     UsersWithUnreads == { i \in AliveUids : user_states[i]["idx_in_messages"] < Len(messages) }
-    
-        
+
+
     \* Set of alive users who have pending adds/removeds
     UsersWithPendings == {
         i \in AliveUids :
@@ -115,20 +107,17 @@ define
             \/ user_states[i]["users_pending_remove"] # <<>>
     }
 
-    \* Set of alive, nonwelcomed users who are not fully caught up with messages
-    NonwelcomedUsersWithUnreads == { i \in AliveNonwelcomedUids : user_states[i]["idx_in_messages"] < Len(messages) }
-    
     \* Does "I am DC" have to be a local property, ie a function of idx_into_messages? Suppose two parties i < j think they're DC.
     \* Both are alive by definition. So j somehow thinks userLeft[uid=i] occurred. Contradiction. So no two parties think they are DC
     \* That said, it is possible for non-DC parties to have conflicting views on who the current DC is. But that doesn't matter.
 
     \* The designated committer is the smallest UID that's alive and has been Added
     DesignatedCommitter == Min(AliveUids \intersect AddedUids)
-    
+
     \* The DC isn't always defined. This means the group is dead.
     DcIsDefined == DesignatedCommitter # MIN_FAILURE
     GroupIsAlive == DcIsDefined
-    
+
     \* The DC doesn't always know that they're the DC. They know iff they've processed all the userLefts for the UIDs before them
     DcIsAware == IF AliveUids = {} THEN FALSE ELSE
         LET
@@ -141,14 +130,17 @@ define
         \* Check that the DC has processed all of the requisite messages
         user_states[DesignatedCommitter]["idx_in_messages"] >= Max(lower_uid_left)
 
+    \* The DC hasn't cleared its users_pending_add list
     DcHasPendingAdds == IF AliveWelcomedUids = {} THEN FALSE ELSE
         Len(user_states[DesignatedCommitter]["users_pending_add"]) > 0
 
+    \* The DC hasn't cleared its users_pending_remove list
     DcHasPendingRemoves == IF AliveWelcomedUids = {} THEN FALSE ELSE
         Len(user_states[DesignatedCommitter]["users_pending_remove"]) > 0
-        
+
+    \* The DC has remaining elements in its users_pending_add or users_pending_remove
     DcHasPendings == DcHasPendingAdds \/ DcHasPendingRemoves
-    
+
     \* Invariant: a user should never get two Adds or two Removes
     UniqueTargetUidInvariant == \A i \in 1..Len(messages) :
         messages[i]["ty"] \in MlsAddRemoveTags =>
@@ -156,7 +148,7 @@ define
                 (j # i /\ messages[i]["ty"] = messages[j]["ty"]) =>
                     messages[i]["target_uid"] # messages[j]["target_uid"]
 
-    \* Invariant: pendings should never have 2 of the same item in there
+    \* Invariant: pendings should never have 2 of the same UID in there
     UniquePendings == \A i \in 1..Len(user_states) :
         /\ \A j,k \in 1..Len(user_states[i]["users_pending_add"]) :
               j # k => user_states[i]["users_pending_add"][j] # user_states[i]["users_pending_add"][k]
@@ -177,25 +169,23 @@ define
         \* Check that the max epoch is the number of add/removes
         \* This and the above show that epoch is monotonically increasing by 1
         /\ Cardinality(all_add_removes) = Max(all_epochs) + 1
-    
+
     \* Our simulation is done once all users have been added, every (alive) user is up to date, and
     \* the DC has no more messages to send. Either that, or the group is dead (ie the DC is undefined)
-    \* TODO: Check if we need to check that DC is aware in this condition. I think not because it's
-    \*       implied by UsersWithUnreads={}
     TerminationCondition ==
         \/ ~DcIsDefined
         \/ /\ next_free_uid = MaxTotalUsers
-           /\ UsersWithUnreads = {}
+           /\ UsersWithUnreads = {} \* Implies DcIsAware
            /\ ~DcHasPendings
            /\ ~dc_is_currently_adding
-           
-        
-    \* The complex way of creating UIDs should be the same as the easy way
+
+
+    \* Invairant:  The set of UIDs is just 1..the number of users that have been created
     UidEnumInvariant == AllUids = 1..Len(user_states)
 
     \* Invariant: at the end, if the group is not dead, nobody should have any pending adds/removes
     EndWithNoPendings == (TerminationCondition /\ DcIsDefined) => UsersWithPendings = {}
-    
+
     \* Invariant: at the end of the simulation, every alive user has the same epoch (or the group
     \* is dead)
     EndWithEqualEpochs ==
@@ -206,7 +196,7 @@ define
         \* Every alive user has the same epoch as the first alive user
         (TerminationCondition /\ GroupIsAlive) =>
             \A u \in AliveUids : user_states[u]["epoch"] = final_epoch
-    
+
     \* Invariant: by the end of the simulation, every joined user received a welcome
     \* (or the group died)
     JoinImpliesWelcome == (TerminationCondition /\ GroupIsAlive) =>
@@ -217,7 +207,7 @@ define
                     /\ j > i
                     /\ messages[j]["ty"] = "mls_welcome"
                     /\ messages[j]["target_uid"] = messages[i]["uid"]
-                    
+
     \* Invariant: by the end of the simulation, every welcomed user received an add
     \* (or the group died)
     WelcomeImpliesAdd == (TerminationCondition /\ GroupIsAlive) =>
@@ -230,21 +220,6 @@ define
                     /\ messages[j]["target_uid"] = messages[i]["target_uid"]
 
 end define;
-        
-\* Invariant: no add/remove messages can happen until a Welcome happens
-            
-
-\* Invariant: the DC is eventually welcomed
-
-\* Invariant: Every welcomed user is eventually added
-    \* specifically. every user has at most 1 welcome, and it is followed by an Add at some point
-
-\* Invariant: users who have been added do not appear on the users_pending_add lists of up-to-date users
-
-
-\* Invariant: added/removed users should eventually make it off pending lists
-
-\* A DC should never receive an epoch ahead of its current epoch
 
 \* Adds a "user_joined" event to messages. The UID is the next free UID.
 \* Also adds that new user's state to the list of states. This user has not
@@ -259,7 +234,7 @@ begin
         users_pending_add |-> <<>>,
         users_pending_remove |-> <<>>
     ]);
- 
+
     next_free_uid := next_free_uid + 1;
 end macro;
 
@@ -269,11 +244,12 @@ begin
     messages := Append(messages, [ty |-> "user_left", uid |-> uid]);
 end macro;
 
+\* We model the delivery service as simply adding users until we hit the max
 process DeliveryService = 0
 begin
     CreateJoinLeave:
         \* Loop until all users have been added
-        \* TODO: users can leave even after the max number of users have joined
+        \* TODO: users should be able to leave even after the max number of users have joined
         while next_free_uid < MaxTotalUsers do
             either
                 append_user_joined_event();
@@ -288,6 +264,8 @@ end process;
 \* TODO: an oddity of the current process is if a user joins then leaves, it still triggers an Add
 \* then Remove. Can we simplify this?
 
+\* We model users as parties that observe and record the joins/leaves of the group, and also process
+\* the welcome messages intended for just them
 process Users = 1
 variables
     new_msg = 0;
@@ -323,14 +301,14 @@ begin
                         \/ /\ new_msg["ty"] = "mls_add"
                            /\ new_msg["target_uid"] = uid
                            /\ new_msg["epoch"] + 1 = user_states[uid]["epoch"]
-                        \* Similarly, skip processing is the DC getting their own message
+                        \* Similarly, skip processing if the DC is getting their own message
                         \/ /\ uid = DesignatedCommitter
                            \* Note: a DC's own Add/Remove could be far behind the DC's current epoch. This
                            \* happens if the DC sent many Adds/Removes before receiving any
                            /\ new_msg["epoch"] < user_states[uid]["epoch"]
                         \* Finally, ignore if not welcomed and just observing an Add/Remove for someone
                         \/    user_states[uid]["welcomed"] = FALSE
-                        
+
                     then
                         ignore_msg := TRUE;
                     else \* Otherwise, make sure that the Add/Remove epoch matches the user state's
@@ -407,6 +385,8 @@ begin
         end while;
 end process;
 
+\* We model the Designated Committer, who is also a User, as doing User things above, but also
+\* processing their pendings list, adding/removing others as they join/leave
 process DC = 2
 variables
     dc_new_idx = 0;
@@ -446,7 +426,7 @@ begin
                     users_pending_add |-> dc_new_pending_adds,
                     users_pending_remove |-> dc_new_pending_removes
                 ];
-                
+
                 \* Append a Welcome then an Add to messages
                 messages := Append(messages, [
                         ty |-> "mls_welcome",
@@ -459,8 +439,8 @@ begin
                 \*       the DC to send Welcome, receive the Welcome and process it, then send the Add.
                 \*       The variables below are all local vars so there's no chance they're accidentally
                 \*       overwritten (eg via the user_states seq) in the Users process.
-                
-                \* Do not send anything if we've been removed between the Welcome and Add
+
+                \* Do not send anything if we've died between the Welcome and Add
                 if dc_uid_at_start_of_add \in DeadUids then
                     skip;
                 else
@@ -495,7 +475,7 @@ begin
                     users_pending_add |-> dc_new_pending_adds,
                     users_pending_remove |-> dc_new_pending_removes
                 ];
-                
+
                 \* Append a Remove to messages
                 messages := Append(messages, [
                         ty |-> "mls_remove",

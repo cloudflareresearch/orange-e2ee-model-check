@@ -25,7 +25,8 @@ UserStateType == [
 (* --algorithm orange
 variables 
     messages = <<>>;
-    \* This is in order of UID
+    \* User states are stored in order of UID
+    \* Initialize with user 1
     user_states = <<[
         welcomed |-> TRUE,
         epoch |-> 0,

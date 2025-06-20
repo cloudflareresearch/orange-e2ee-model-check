@@ -57,3 +57,7 @@ Thus, the Welcome always comes first. If the DC dies after the Welcome, then the
 ## License
 
 This work is marked by Michael Rosenberg with [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
+
+## Disclaimer
+
+This is not an officially supported Cloudflare product. This project is not eligible for the Cloudflare Vulnerability Rewards Program.
